@@ -1,5 +1,5 @@
 import pygame as p
-from Chess import ChessEngine
+import ChessEngine
 
 WIDTH = HEIGHT = 512 # Kích thước cửa sổ
 DIMENSION = 8 # Kích thước bảng cờ vua 8x8
@@ -37,10 +37,10 @@ def main():
 def drawGameState(screen, gs):
     # Vẽ hình vuông trên bảng
     drawBoard(screen)
-    # Vẽ các mảnh lên trên các hình vuông
+    # Vẽ các quân cờ lên trên các hình vuông
     drawPieces(screen, gs.board)
 
-# Vẽ hình vuông lên trển bảng, hình vuông góc trên bên trái luôn là màu trắng
+# Vẽ hình vuông lên bảng, hình vuông góc trên bên trái luôn là màu trắng
 def drawBoard(screen):
     colors = [p.Color("white"), p.Color("gray")]
     for r in range(DIMENSION):
@@ -48,10 +48,13 @@ def drawBoard(screen):
             color = colors[((r * c) % 2)]
             p.draw.rect(screen, color, p.Rect(c * SQ_SIZE, r * SQ_SIZE, SQ_SIZE, SQ_SIZE))
 
+# Vẽ quân cờ lên bảng sử dụng GameState.board
 def drawPieces(screen, board):
-    pass
+    for r in range(DIMENSION):
+        for c in range(DIMENSION):
+            piece = board[r][c]
+            if piece != "--":
+                screen.blit(IMAGES[piece], p.Rect(c * SQ_SIZE,r * SQ_SIZE, SQ_SIZE, SQ_SIZE))
 
 if __name__ == "  main  ":
     main()
-
-main()
