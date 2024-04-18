@@ -1,6 +1,6 @@
 import random
 
-pieceScore = {"K": 0, "Q": 10, "R": 5, "B": 3, "K": 3, "p": 1}
+pieceScore = {"K": 0, "Q": 10, "R": 5, "B": 3, "N": 3, "p": 1}
 CHECKMATE = 1000
 STALEMATE = 0 # >0 => white win : <0 black win
 
@@ -13,15 +13,20 @@ def findBestMove(gs, validMoves):
     bestMove = None
     for playerMove in validMoves:
         gs.makeMove(playerMove)
-        if gs.checkmate:
-            score = CHECKMATE
-        elif gs.stalemate:
-            score = 0
-        else:
-            score = turn * scoreMaterial(gs.board)
-        if score > maxScore:
-            score = maxScore
-            bestMove = playerMove
+        apponentsMoves = gs.getValidMoves()
+        for apponentsMove in apponentsMoves:
+            gs.makeMove(apponentsMove)
+            if gs.checkmate:
+                score = -CHECKMATE
+            elif gs.stalemate:
+                score = 0
+            else:
+                score = -turn * scoreMaterial(gs.board)
+            if score > maxScore:
+                maxScore = score
+                bestMove = playerMove
+            gs.undoMove()
+        gs.undoMove
     return bestMove
 
 def scoreMaterial(board):

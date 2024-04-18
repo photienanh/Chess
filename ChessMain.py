@@ -1,11 +1,12 @@
 import pygame as p
-import ChessEngine
+import ChessEngine, SmartMoveFinder
 
 WIDTH = HEIGHT = 512 # Kích thước cửa sổ
 DIMENSION = 8 # Kích thước bảng cờ vua 8x8
 SQ_SIZE = HEIGHT // DIMENSION
 MAX_FPS = 15
 IMAGES = {}
+gameOver = False
 
 playerOne = True # True = playerTurn = whiteTurn
 playerTwo = False 
@@ -33,41 +34,54 @@ def main():
     playerClicks = []
 
     while running:
+        humanTurn = (gs.whiteToMove and playerOne) or (not gs.whiteToMove and playerTwo)
+
+
         for e in p.event.get():
             if e.type == p.QUIT:
                 running = False 
             # Xử lý chuột
             elif e.type == p.MOUSEBUTTONDOWN:
                 # Lấy ra tạo đọ (x,y) của chuột
-                location = p.mouse.get_pos() 
-                col = location[0] // SQ_SIZE
-                row = location[1] // SQ_SIZE
-                if sqSelected == (row, col):
-                    # Bỏ chọn
-                    sqSelected = ()
-                    # Xóa danh sách
-                    playerClicks = []
-                else:
-                    sqSelected = (row, col)
-                    # Thêm 2 lần nhấp chuột đầu tiên
-                    playerClicks.append(sqSelected)
-                # Nhiều hơn 2 lần nhấp chuột
-                if len(playerClicks) == 2:
-                    move = ChessEngine.Move(playerClicks[0], playerClicks[1], gs.board)
-                    print(move.getChessLocation())
-                    if move in validMoves:
-                        gs.makeMove(move)
-                        moveMade = True
+                if not gameOver and humanTurn:
+                    location = p.mouse.get_pos() 
+                    col = location[0] // SQ_SIZE
+                    row = location[1] // SQ_SIZE
+                    if sqSelected == (row, col):
+                        # Bỏ chọn
                         sqSelected = ()
+                        # Xóa danh sách
                         playerClicks = []
                     else:
-                        playerClicks = [sqSelected]
+                        sqSelected = (row, col)
+                        # Thêm 2 lần nhấp chuột đầu tiên
+                        playerClicks.append(sqSelected)
+                    # Nhiều hơn 2 lần nhấp chuột
+                    if len(playerClicks) == 2:
+                        move = ChessEngine.Move(playerClicks[0], playerClicks[1], gs.board)
+                        print(move.getChessLocation())
+                        if move in validMoves:
+                            gs.makeMove(move)
+                            moveMade = True
+                            sqSelected = ()
+                            playerClicks = []
+                        else:
+                            playerClicks = [sqSelected]
             # Xử lý phím
             elif e.type == p.KEYDOWN:
                 # Hoàn tác nếu phím 'z' được nhấn
                 if e.key == p.K_z:
                     gs.undoMove()
                     moveMade = True
+
+        if not gameOver and not humanTurn:
+            AIMove = SmartMoveFinder.findBestMove(gs, validMoves) 
+            if AIMove is None:  
+                AIMove = SmartMoveFinder.findRandomMove(validMoves)
+            gs.makeMove(AIMove)
+            moveMade = True
+            animate = True
+
         if moveMade:
             validMoves= gs.getValidMoves()
             moveMade = False
@@ -99,6 +113,5 @@ def drawPieces(screen, board):
             if piece != "--":
                 screen.blit(IMAGES[piece], p.Rect(c * SQ_SIZE,r * SQ_SIZE, SQ_SIZE, SQ_SIZE))
 
-#if __name__ == "  main  ":
-#    main()
-main()
+if __name__ == "main":
+    main()
