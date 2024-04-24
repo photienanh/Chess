@@ -4,6 +4,7 @@ pieceScore = {"K": 0, "Q": 10, "R": 5, "B": 3, "N": 3, "p": 1}
 CHECKMATE = 1000
 STALEMATE = 0 # >0 => white win : <0 black win
 
+
 def findRandomMove(validMoves):
     return validMoves[random.randint(0, len(validMoves)-1)]
 
@@ -15,22 +16,28 @@ def findBestMove(gs, validMoves):
     for AIMove in validMoves:
         gs.makeMove(AIMove)
         PlayerMoves = gs.getValidMoves()
-        MaxAIscore = -CHECKMATE
-        for PlayerMove in PlayerMoves:
-            gs.makeMove(PlayerMove)
-            if gs.checkmate:
-                score = -turn * CHECKMATE
-            elif gs.stalemate:
-                score = STALEMATE
-            else:
-                score = -turn * scoreMaterial(gs.board)
-            if score > MaxAIscore:
-                MaxAIscore = score
-            gs.undoMove()
-        gs.undoMove()
+        if gs.stalemate:
+            MaxAIscore = STALEMATE
+        elif gs.checkmate:           
+            MaxAIscore = -CHECKMATE
+        else:
+            MaxAIscore = -CHECKMATE
+            for PlayerMove in PlayerMoves:
+                gs.makeMove(PlayerMove)
+                gs.getValidMoves()
+                if gs.checkmate:
+                    score = CHECKMATE
+                elif gs.stalemate:
+                    score = STALEMATE
+                else:
+                    score = -turn * scoreMaterial(gs.board)
+                if score > MaxAIscore:
+                    MaxAIscore = score
+                gs.undoMove()
         if MiniMaxScore > MaxAIscore:
             MiniMaxScore = MaxAIscore
             bestAIMove = AIMove
+        gs.undoMove()
     return bestAIMove
 
 def scoreMaterial(board):
