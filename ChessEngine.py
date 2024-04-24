@@ -100,7 +100,7 @@ class GameState():
             startRow = self.whiteKingLocation[0]
             startCol = self.whiteKingLocation[1]
         else:
-            enenmyColor = "w"
+            enemyColor = "w"
             allyColor = "b"
             startRow = self.blackKingLocation[0]
             startCol = self.blackKingLocation[1]
@@ -118,11 +118,11 @@ class GameState():
                             possiblePin = (endRow, endCol, d[0], d[1])
                         else:
                             break
-                    elif endPiece[0] == enenmyColor:
+                    elif endPiece[0] == enemyColor:
                         type = endPiece[1]
                         if (0 <= j <= 3 and type == 'R') or \
                             (4 <= j <= 7 and type == "B") or \
-                            (i == 1 and type == 'p' and ((enenmyColor == 'w' and 6 <= j <= 7) or (enenmyColor == 'b' and 4 <= j <= 5))) or \
+                            (i == 1 and type == 'p' and ((enemyColor == 'w' and 6 <= j <= 7) or (enemyColor == 'b' and 4 <= j <= 5))) or \
                             (type == 'Q') or (i == 1 and type == 'K'):
                             if possiblePin == ():
                                 inCheck = True
