@@ -6,6 +6,7 @@ DIMENSION = 8 # Kích thước bảng cờ vua 8x8
 SQ_SIZE = HEIGHT // DIMENSION
 MAX_FPS = 15
 IMAGES = {}
+
 gameOver = False
 
 playerOne = True # True = playerTurn = whiteTurn
@@ -76,7 +77,7 @@ def main():
                     animate = False
                     gameOver = False
 
-        if not gameOver and not humanTurn:
+        if gameOver == False and not humanTurn:
             AIMove = SmartMoveFinder.findBestMove(gs, validMoves) 
             if AIMove is None:  
                 AIMove = SmartMoveFinder.findRandomMove(validMoves)
