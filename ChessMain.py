@@ -73,6 +73,8 @@ def main():
                 if e.key == p.K_z:
                     gs.undoMove()
                     moveMade = True
+                    animate = False
+                    gameOver = False
 
         if not gameOver and not humanTurn:
             AIMove = SmartMoveFinder.findBestMove(gs, validMoves) 
@@ -113,5 +115,5 @@ def drawPieces(screen, board):
             if piece != "--":
                 screen.blit(IMAGES[piece], p.Rect(c * SQ_SIZE,r * SQ_SIZE, SQ_SIZE, SQ_SIZE))
 
-if __name__ == "main":
-    main()
+                
+main()
