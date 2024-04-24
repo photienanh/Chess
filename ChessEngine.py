@@ -308,4 +308,4 @@ class Move():
     def getChessLocation(self):
         return self.getRankFile(self.startRow, self.startCol) + self.getRankFile(self.endRow, self.endCol)
     def getRankFile(self, r, c):
-        return self.colsToFiles[c] + self.rowToRanks(r)
+        return self.colsToFiles[c] + self.rowToRanks[r]

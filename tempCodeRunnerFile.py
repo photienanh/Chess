@@ -1,0 +1,3 @@
+IMAGES = {}
+
+gameOver = False

@@ -20,6 +20,7 @@ def loadImages():
 
 # Xử lý dữ liệu đầu vào của người dùng và cập nhật đồ họa
 def main():
+    global gameOver
     p.init()
     screen = p.display.set_mode((WIDTH, HEIGHT))
     clock = p.time.Clock()
