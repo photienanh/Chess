@@ -9,25 +9,29 @@ def findRandomMove(validMoves):
 
 def findBestMove(gs, validMoves):
     turn = 1 if gs.whiteToMove else -1
-    maxScore = -CHECKMATE
-    bestMove = None
-    for playerMove in validMoves:
-        gs.makeMove(playerMove)
-        apponentsMoves = gs.getValidMoves()
-        for apponentsMove in apponentsMoves:
-            gs.makeMove(apponentsMove)
+    MiniMaxScore = CHECKMATE
+    bestAIMove = None
+    random.shuffle(validMoves)
+    for AIMove in validMoves:
+        gs.makeMove(AIMove)
+        PlayerMoves = gs.getValidMoves()
+        MaxAIscore = -CHECKMATE
+        for PlayerMove in PlayerMoves:
+            gs.makeMove(PlayerMove)
             if gs.checkmate:
-                score = -CHECKMATE
+                score = -turn * CHECKMATE
             elif gs.stalemate:
-                score = 0
+                score = STALEMATE
             else:
                 score = -turn * scoreMaterial(gs.board)
-            if score > maxScore:
-                maxScore = score
-                bestMove = playerMove
+            if score > MaxAIscore:
+                MaxAIscore = score
             gs.undoMove()
-        gs.undoMove
-    return bestMove
+        gs.undoMove()
+        if MiniMaxScore > MaxAIscore:
+            MiniMaxScore = MaxAIscore
+            bestAIMove = AIMove
+    return bestAIMove
 
 def scoreMaterial(board):
     score = 0
