@@ -27,6 +27,7 @@ def main():
     screen.fill(p.Color("white"))
     gs = ChessEngine.GameState()
     validMoves = gs.getValidMoves()
+    # Biến cờ khi thực hiện một nước đi
     moveMade = False
     loadImages()
     running = True
@@ -90,20 +91,39 @@ def main():
             validMoves= gs.getValidMoves()
             moveMade = False
 
-        drawGameState(screen, gs)
+        drawGameState(screen, gs, validMoves, sqSelected)
         clock.tick(MAX_FPS)
         p.display.flip()
 
+# Đánh dấu ô vuông mà quân cờ được chọn để di chuyển
+def highlightSquares(screen, gs, validMoves, sqSelected):
+    if sqSelected != ():
+        r, c = sqSelected
+        # sqSelected là 1 quân cờ có thể di chuyển
+        if gs.board[r][c][0] == ('w' if gs.whiteToMove else 'b'): 
+            # Đánh dấu ô vuông được chọn
+            s = p.Surface((SQ_SIZE, SQ_SIZE))
+            s.set_alpha(100)
+            s.fill(p.Color('blue'))
+            screen.blit(s, (c*SQ_SIZE, r*SQ_SIZE))
+            # Đánh dấu ô vuông di chuyển được
+            s.fill(p.Color('yellow'))
+            for move in validMoves:
+                if move.startRow == r and move.startCol == c:
+                    screen.blit(s, (move.endCol*SQ_SIZE, move.endRow*SQ_SIZE))
+
 # Chịu trách nhiệm về tất cả đồ họa trong trạng thái trò chơi hiện tại
-def drawGameState(screen, gs):
+def drawGameState(screen, gs, validMoves, sqSelected):
     # Vẽ hình vuông trên bảng
     drawBoard(screen)
+    highlightSquares(screen, gs, validMoves, sqSelected)
     # Vẽ các quân cờ lên trên các hình vuông
     drawPieces(screen, gs.board)
 
 # Vẽ hình vuông lên bảng, hình vuông góc trên bên trái luôn là màu trắng
 def drawBoard(screen):
-    colors = [p.Color("white"), p.Color("gray")]
+    global colors
+    colors = [p.Color("#FFFFE0"), p.Color("#A2CD5A")]
     for r in range(DIMENSION):
         for c in range(DIMENSION):
             color = colors[((r + c) % 2)]
@@ -117,5 +137,18 @@ def drawPieces(screen, board):
             if piece != "--":
                 screen.blit(IMAGES[piece], p.Rect(c * SQ_SIZE,r * SQ_SIZE, SQ_SIZE, SQ_SIZE))
 
-                
-main()
+# Hành động di chuyển
+def animateMove(move, screen, board, ):
+    global colors
+    # 
+    coords = []
+    dR = move.endRow - move.startRow
+    dC = move.endCol - move.startCol
+    #
+    framesPerSquare = 10 
+    frameCount = (abs(dR) + abs(dC)) * framesPerSquare
+    for frame in range(frameCount + 1):
+        coords.append((move.startRow + dR * frame / frameCount, move.startCol + dC * frame / frameCount))
+
+if __name__ == "__main__":
+    main()
