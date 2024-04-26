@@ -27,8 +27,10 @@ def main():
     screen.fill(p.Color("white"))
     gs = ChessEngine.GameState()
     validMoves = gs.getValidMoves()
-    # Biến cờ khi thực hiện một nước đi
+    #
     moveMade = False
+    #
+    animate = False
     loadImages()
     running = True
     # Nếu không có ô vuông nào chọn, xử lý lần nhấp chuột cuối cùng (tuple: (col, row))
@@ -45,8 +47,8 @@ def main():
                 running = False 
             # Xử lý chuột
             elif e.type == p.MOUSEBUTTONDOWN:
-                # Lấy ra tạo đọ (x,y) của chuột
                 if not gameOver and humanTurn:
+                    # Lấy ra tạo độ (x,y) của chuột
                     location = p.mouse.get_pos() 
                     col = location[0] // SQ_SIZE
                     row = location[1] // SQ_SIZE
@@ -63,12 +65,14 @@ def main():
                     if len(playerClicks) == 2:
                         move = ChessEngine.Move(playerClicks[0], playerClicks[1], gs.board)
                         print(move.getChessLocation())
-                        if move in validMoves:
-                            gs.makeMove(move)
-                            moveMade = True
-                            sqSelected = ()
-                            playerClicks = []
-                        else:
+                        for i in range(len(validMoves)):
+                            if move == validMoves[i]:
+                                gs.makeMove(validMoves[i])
+                                moveMade = True
+                                animate = True
+                                sqSelected = ()
+                                playerClicks = []
+                        if not moveMade:
                             playerClicks = [sqSelected]
             # Xử lý phím
             elif e.type == p.KEYDOWN:
@@ -77,7 +81,14 @@ def main():
                     gs.undoMove()
                     moveMade = True
                     animate = False
-                    gameOver = False
+                # Cài lại bàn cờ khi ấn 'r'
+                if e.key == p.K_r:
+                    gs = ChessEngine.GameState()
+                    validMoves = gs.getValidMoves()
+                    sqSelected = ()
+                    playerClicks = []
+                    moveMade = False
+                    animate = False
 
         if not gameOver and not humanTurn:
             AIMove = SmartMoveFinder.findBestMove(gs, validMoves) 
@@ -88,10 +99,24 @@ def main():
             animate = True
 
         if moveMade:
+            if animate:
+                animateMove(gs.moveLog[-1], screen, gs.board, clock)
             validMoves= gs.getValidMoves()
             moveMade = False
+            animate = False
 
         drawGameState(screen, gs, validMoves, sqSelected)
+
+        if gs.checkMate:
+            gameOver = True
+            if gs.whiteToMove:
+                drawText(screen, 'Black win')
+            else:
+                drawText(screen, 'White win')
+        elif gs.staleMate:
+            gameOver = True
+            drawText(screen, 'Stalemate')
+
         clock.tick(MAX_FPS)
         p.display.flip()
 
@@ -105,7 +130,7 @@ def highlightSquares(screen, gs, validMoves, sqSelected):
             s = p.Surface((SQ_SIZE, SQ_SIZE))
             s.set_alpha(100)
             s.fill(p.Color('blue'))
-            screen.blit(s, (c*SQ_SIZE, r*SQ_SIZE))
+            screen.blit(s, (c * SQ_SIZE, r * SQ_SIZE))
             # Đánh dấu ô vuông di chuyển được
             s.fill(p.Color('yellow'))
             for move in validMoves:
@@ -140,15 +165,33 @@ def drawPieces(screen, board):
 # Hành động di chuyển
 def animateMove(move, screen, board, ):
     global colors
-    # 
-    coords = []
     dR = move.endRow - move.startRow
     dC = move.endCol - move.startCol
     #
     framesPerSquare = 10 
     frameCount = (abs(dR) + abs(dC)) * framesPerSquare
     for frame in range(frameCount + 1):
-        coords.append((move.startRow + dR * frame / frameCount, move.startCol + dC * frame / frameCount))
+        r, c = (move.startRow + dR * frame / frameCount, move.startCol + dC * frame / frameCount)
+        drawBoard(screen)
+        drawPieces(screen, board)
+        #
+        color = colors[(move.endRow + move.endSquare) % 2]
+        endSquare = p.Rect(move.endCol * SQ_SIZE, move.endRow * SQ_SIZE, SQ_SIZE, SQ_SIZE)
+        p.draw.rect(screen, color, endSquare)
+        #
+        if move.pieceCaptured != '--':
+            screen.blit(IMAGES[move.pieceCaptured], endSquare)
+        #
+        screen.blit(IMAGES[move.pieceMoved], p.Rect(c * SQ_SIZE, r * SQ_SIZE, SQ_SIZE, SQ_SIZE))
+        p.display.flip()
+        #
+        clock.tick(60)
+
+def drawText(screen, text):
+    font = p.font.SysFont("Helvitca", 32, True, False)
+    textObject = font.render(text, 0, p.Color('Black'))
+    textLocation = p.Rect(0, 0, WIDTH, HEIGHT).move(WIDTH / 2 - textObject.get_width() / 2, HEIGHT / 2 - textObject.get_height() / 2)
+    screen.blit(textObject, textLocation.move(2, 2))
 
 if __name__ == "__main__":
     main()
