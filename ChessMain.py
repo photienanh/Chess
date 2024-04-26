@@ -169,9 +169,7 @@ def animateMove(move, screen, board, clock):
     global colors
     dR = move.endRow - move.startRow
     dC = move.endCol - move.startCol
-    #
-    framesPerSquare = 10 
-    frameCount = (abs(dR) + abs(dC)) * framesPerSquare
+    frameCount = (abs(dR) + abs(dC)) * 2
     for frame in range(frameCount + 1):
         r, c = (move.startRow + dR * frame / frameCount, move.startCol + dC * frame / frameCount)
         drawBoard(screen)
@@ -187,7 +185,7 @@ def animateMove(move, screen, board, clock):
         screen.blit(IMAGES[move.pieceMoved], p.Rect(c * SQ_SIZE, r * SQ_SIZE, SQ_SIZE, SQ_SIZE))
         p.display.flip()
         #
-        clock.tick(60)
+        clock.tick(200)
 
 def drawText(screen, text):
     font = p.font.SysFont("Helvitca", 32, True, False)
