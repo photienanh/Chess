@@ -16,18 +16,18 @@ def findBestMove(gs, validMoves):
     for AIMove in validMoves:
         gs.makeMove(AIMove)
         PlayerMoves = gs.getValidMoves()
-        if gs.stalemate:
+        if gs.staleMate:
             MaxAIscore = STALEMATE
-        elif gs.checkmate:           
+        elif gs.checkMate:           
             MaxAIscore = -CHECKMATE
         else:
             MaxAIscore = -CHECKMATE
             for PlayerMove in PlayerMoves:
                 gs.makeMove(PlayerMove)
                 gs.getValidMoves()
-                if gs.checkmate:
+                if gs.checkMate:
                     score = CHECKMATE
-                elif gs.stalemate:
+                elif gs.staleMate:
                     score = STALEMATE
                 else:
                     score = -turn * scoreMaterial(gs.board)
