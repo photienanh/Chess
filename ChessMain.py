@@ -81,6 +81,8 @@ def main():
                     gs.undoMove()
                     moveMade = True
                     animate = False
+                    gameOver = False
+                    
                 # Cài lại bàn cờ khi ấn 'r'
                 if e.key == p.K_r:
                     gs = ChessEngine.GameState()
@@ -193,5 +195,4 @@ def drawText(screen, text):
     textLocation = p.Rect(0, 0, WIDTH, HEIGHT).move(WIDTH / 2 - textObject.get_width() / 2, HEIGHT / 2 - textObject.get_height() / 2)
     screen.blit(textObject, textLocation.move(2, 2))
 
-if __name__ == "__main__":
-    main()
+main()
