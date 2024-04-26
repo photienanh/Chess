@@ -81,7 +81,7 @@ def main():
                     gs.undoMove()
                     moveMade = True
                     animate = False
-                    gameOver = False
+                    # gameOver = False
                     
                 # Cài lại bàn cờ khi ấn 'r'
                 if e.key == p.K_r:
@@ -112,12 +112,12 @@ def main():
         if gs.checkMate:
             gameOver = True
             if gs.whiteToMove:
-                drawText(screen, 'Black win')
+                drawText(screen, 'Black win.')
             else:
-                drawText(screen, 'White win')
+                drawText(screen, 'White win.')
         elif gs.staleMate:
             gameOver = True
-            drawText(screen, 'Stalemate')
+            drawText(screen, 'Stalemate.')
 
         clock.tick(MAX_FPS)
         p.display.flip()
@@ -137,7 +137,7 @@ def highlightSquares(screen, gs, validMoves, sqSelected):
             s.fill(p.Color('yellow'))
             for move in validMoves:
                 if move.startRow == r and move.startCol == c:
-                    screen.blit(s, (move.endCol*SQ_SIZE, move.endRow*SQ_SIZE))
+                    screen.blit(s, (move.endCol * SQ_SIZE, move.endRow * SQ_SIZE))
 
 # Chịu trách nhiệm về tất cả đồ họa trong trạng thái trò chơi hiện tại
 def drawGameState(screen, gs, validMoves, sqSelected):
@@ -165,7 +165,7 @@ def drawPieces(screen, board):
                 screen.blit(IMAGES[piece], p.Rect(c * SQ_SIZE,r * SQ_SIZE, SQ_SIZE, SQ_SIZE))
 
 # Hành động di chuyển
-def animateMove(move, screen, board, ):
+def animateMove(move, screen, board, clock):
     global colors
     dR = move.endRow - move.startRow
     dC = move.endCol - move.startCol
@@ -177,7 +177,7 @@ def animateMove(move, screen, board, ):
         drawBoard(screen)
         drawPieces(screen, board)
         #
-        color = colors[(move.endRow + move.endSquare) % 2]
+        color = colors[(move.endRow + move.endCol) % 2]
         endSquare = p.Rect(move.endCol * SQ_SIZE, move.endRow * SQ_SIZE, SQ_SIZE, SQ_SIZE)
         p.draw.rect(screen, color, endSquare)
         #
@@ -195,4 +195,5 @@ def drawText(screen, text):
     textLocation = p.Rect(0, 0, WIDTH, HEIGHT).move(WIDTH / 2 - textObject.get_width() / 2, HEIGHT / 2 - textObject.get_height() / 2)
     screen.blit(textObject, textLocation.move(2, 2))
 
-main()
+if __name__ == "__main__":
+    main()
