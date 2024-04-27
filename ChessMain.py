@@ -81,7 +81,7 @@ def main():
                     gs.undoMove()
                     moveMade = True
                     animate = False
-                    # gameOver = False
+                    gameOver = False
                     
                 # Cài lại bàn cờ khi ấn 'r'
                 if e.key == p.K_r:
@@ -91,6 +91,7 @@ def main():
                     playerClicks = []
                     moveMade = False
                     animate = False
+                    gameOver = False
 
         if not gameOver and not humanTurn:
             AIMove = SmartMoveFinder.findBestMove(gs, validMoves) 
