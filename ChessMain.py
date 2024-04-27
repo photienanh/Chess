@@ -8,7 +8,7 @@ MAX_FPS = 15
 IMAGES = {}
 
 playerOne = True # True = playerTurn = whiteTurn
-playerTwo = True
+playerTwo = False
 
 # Khởi tạo từ điển của các ảnh
 def loadImages():

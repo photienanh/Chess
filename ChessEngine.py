@@ -76,7 +76,6 @@ class GameState():
             if move.enPassant:
                 self.board[move.endRow][move.endCol] = "--"
                 self.board[move.startRow][move.endCol] = move.pieceCaptured
-            
             self.enPassantPossibleLog.pop()
             self.enPassantPossible = self.enPassantPossibleLog[-1]
 
@@ -91,8 +90,8 @@ class GameState():
                 else:
                     self.board[move.endRow][move.endCol-2] = self.board[move.endRow][move.endCol+1]
                     self.board[move.endRow][move.endCol+1] = '--'
-            self.staleMate = False
             self.checkMate = False
+            self.staleMate = False
 
     def getValidMoves(self):
         moves = []
@@ -148,13 +147,45 @@ class GameState():
         else:
             return self.squareUnderAttack(self.blackKingLocation[0],self.blackKingLocation[1])
     
-    def squareUnderAttack(self, r, c):
-        self.whiteToMove = not self.whiteToMove
-        oppMoves = self.getAllPossibleMoves()
-        self.whiteToMove = not self.whiteToMove
-        for move in oppMoves:
-            if move.endRow == r and move.endCol == c:
-                return True
+    def squareUnderAttack(self, r, c, allyColor):
+        # self.whiteToMove = not self.whiteToMove
+        # oppMoves = self.getAllPossibleMoves()
+        # self.whiteToMove = not self.whiteToMove
+        # for move in oppMoves:
+        #     if move.endRow == r and move.endCol == c:
+        #         return True
+        # return False
+        enemyColor = 'w' if allyColor == 'b' else 'b'
+        directions = ((-1,0), (0,-1), (1,0), (0,1), (-1,-1), (-1,1), (1,-1), (1,1))
+        for j in range(len(directions)):
+            d = directions[j]
+            for i in range(1, 8):
+                endRow = r + d[0]*i
+                endCol = c + d[1]*i
+                if 0 <= endRow <8 and 0 <= endCol < 8:
+                    endPiece = self.board[endRow][endCol]
+                    if endPiece[0] == allyColor:
+                        break
+                    elif endPiece[0] == enemyColor:
+                        type = endPiece[1]
+                        if (0 <= j <= 3 and type == 'R') or \
+                                (4 <= j <=7 and type == 'B') or \
+                                (i == 1 and type == 'p' and (
+                                    (enemyColor == 'w' and 6 <= j <= 7) or (enemyColor == 'b' and 4 <= j <= 5))) or \
+                                (type == 'Q') or (i == 1 and type == 'K'):
+                            return True
+                        else:
+                            break
+                else:
+                    break
+        knightMoves = ((-2,-1), (-2,1), (-1,-2), (-1,2), (1,-2), (1,2), (2,-1), (2,1))
+        for m in knightMoves:
+            endRow = r + m[0]
+            endCol = c + m[1]
+            if 0 <= endRow < 8 and 0 <= endCol < 8:
+                endPiece = self.board[endRow][endCol]
+                if endPiece[0] == enemyColor and endPiece[1] == 'N':
+                    return True
         return False
 
     def getAllPossibleMoves(self):
@@ -212,7 +243,7 @@ class GameState():
                             break
                 else:
                     break
-        knightMoves = ((-1,-1),(-2,1),(-1,-2),(-1,2),(1,-2),(1,2),(2,-1),(2,1))
+        knightMoves = ((-2,-1),(-2,1),(-1,-2),(-1,2),(1,-2),(1,2),(2,-1),(2,1))
         for m in knightMoves:
             endRow = startRow + m[0]
             endCol = startCol + m[1]
@@ -252,12 +283,10 @@ class GameState():
         elif move.pieceCaptured == 'bR':
             if move.endRow == 0:
                 if move.endCol == 0:
-                    self.currentCastlingRight.wqs = False
+                    self.currentCastlingRight.bqs = False
                 elif move.endCol == 7:
-                    self.currentCastlingRight.wks = False
+                    self.currentCastlingRight.bks = False
 
-
-            
     def getPawnMoves(self, r, c, moves):
         piecePinned = False
         pinDirection = ()
@@ -281,7 +310,7 @@ class GameState():
             if not piecePinned or pinDirection == (moveAmount, 0):
                 moves.append(Move((r, c), (r + moveAmount, c), self.board))
                 if r == startRow and self.board[r + 2 * moveAmount][c] == '--':
-                    moves.append(Move((r, c), (r + 2 * moveAmount), self.board))
+                    moves.append(Move((r, c), (r + 2 * moveAmount, c), self.board))
         
         if c - 1 >= 0:
             if not piecePinned or pinDirection == (moveAmount, -1):
@@ -415,8 +444,8 @@ class GameState():
         colMoves = (-1, 0, 1, -1, 1, -1, 0, 1)
         allyColor = "w" if self.whiteToMove else "b"
         for i in range(8):
-            endRow = r + rowMoves[i][i]
-            endCol = c + colMoves[i][i]
+            endRow = r + rowMoves[i]
+            endCol = c + colMoves[i]
             if 0 <= endRow < 8 and 0 <= endCol < 8:
                 endPiece = self.board[endRow][endCol]
                 if endPiece[0] != allyColor:
@@ -440,19 +469,19 @@ class GameState():
         if inCheck:
             return
         if (self.whiteToMove and self.currentCastlingRight.wks) or (not self.whiteToMove and self.currentCastlingRight.bks):
-            self.getKingsideCastleMoves(r, c, moves)
+            self.getKingsideCastleMoves(r, c, moves, allyColor)
         if (self.whiteToMove and self.currentCastlingRight.wqs) or (not self.whiteToMove and self.currentCastlingRight.bqs):
-            self.getQueensideCastleMoves(r, c, moves)
+            self.getQueensideCastleMoves(r, c, moves, allyColor)
     
     def getKingsideCastleMoves(self, r, c, moves, allyColor):
         if self.board[r][c+1] == '--' and self.board[r][c+2] == '--' and \
          not self.squareUnderAttack(r, c+1, allyColor) and not self.squareUnderAttack(r, c+2, allyColor):
             moves.append(Move((r,c), (r, c+2), self.board, castle=True))
     
-    def getQueensideCastleMoves(self, r, c, moves,allaColor):
+    def getQueensideCastleMoves(self, r, c, moves, allyColor):
         if self.board[r][c-1] == '--' and self.board[r][c-2] == '--' and self.board[r][c-3] == '--' and \
-         not self.squareUnderAttack(r, c-1,allaColor) and not self.squareUnderAttack(r, c-2, allaColor):
-                moves.append(Move((r,c), (r, c-2), self.board, castle=True))
+         not self.squareUnderAttack(r, c-1,allyColor) and not self.squareUnderAttack(r, c-2, allyColor):
+            moves.append(Move((r,c), (r, c-2), self.board, castle=True))
 
 class Move():
     ranksToRows = {"1":7,"2":6,"3":5,"4":4,
