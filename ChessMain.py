@@ -7,10 +7,8 @@ SQ_SIZE = HEIGHT // DIMENSION
 MAX_FPS = 15
 IMAGES = {}
 
-gameOver = False
-
 playerOne = True # True = playerTurn = whiteTurn
-playerTwo = False 
+playerTwo = True
 
 # Khởi tạo từ điển của các ảnh
 def loadImages():
@@ -20,7 +18,6 @@ def loadImages():
 
 # Xử lý dữ liệu đầu vào của người dùng và cập nhật đồ họa
 def main():
-    global gameOver
     p.init()
     screen = p.display.set_mode((WIDTH, HEIGHT))
     clock = p.time.Clock()
@@ -37,11 +34,10 @@ def main():
     sqSelected = ()
     # Lưu lại các lần nhấp chuột
     playerClicks = []
+    gameOver = False
 
     while running:
         humanTurn = (gs.whiteToMove and playerOne) or (not gs.whiteToMove and playerTwo)
-
-
         for e in p.event.get():
             if e.type == p.QUIT:
                 running = False 
@@ -79,6 +75,8 @@ def main():
                 # Hoàn tác nếu phím 'z' được nhấn
                 if e.key == p.K_z:
                     gs.undoMove()
+                    sqSelected = ()
+                    playerClicks = []
                     moveMade = True
                     animate = False
                     gameOver = False
@@ -123,6 +121,14 @@ def main():
         clock.tick(MAX_FPS)
         p.display.flip()
 
+# Chịu trách nhiệm về tất cả đồ họa trong trạng thái trò chơi hiện tại
+def drawGameState(screen, gs, validMoves, sqSelected):
+    # Vẽ hình vuông trên bảng
+    drawBoard(screen)
+    highlightSquares(screen, gs, validMoves, sqSelected)
+    # Vẽ các quân cờ lên trên các hình vuông
+    drawPieces(screen, gs.board)
+
 # Đánh dấu ô vuông mà quân cờ được chọn để di chuyển
 def highlightSquares(screen, gs, validMoves, sqSelected):
     if sqSelected != ():
@@ -139,14 +145,6 @@ def highlightSquares(screen, gs, validMoves, sqSelected):
             for move in validMoves:
                 if move.startRow == r and move.startCol == c:
                     screen.blit(s, (move.endCol * SQ_SIZE, move.endRow * SQ_SIZE))
-
-# Chịu trách nhiệm về tất cả đồ họa trong trạng thái trò chơi hiện tại
-def drawGameState(screen, gs, validMoves, sqSelected):
-    # Vẽ hình vuông trên bảng
-    drawBoard(screen)
-    highlightSquares(screen, gs, validMoves, sqSelected)
-    # Vẽ các quân cờ lên trên các hình vuông
-    drawPieces(screen, gs.board)
 
 # Vẽ hình vuông lên bảng, hình vuông góc trên bên trái luôn là màu trắng
 def drawBoard(screen):
@@ -179,14 +177,21 @@ def animateMove(move, screen, board, clock):
         color = colors[(move.endRow + move.endCol) % 2]
         endSquare = p.Rect(move.endCol * SQ_SIZE, move.endRow * SQ_SIZE, SQ_SIZE, SQ_SIZE)
         p.draw.rect(screen, color, endSquare)
-        #
+
         if move.pieceCaptured != '--':
+            if move.enPassant:
+                enPassantRow = move.endRow + 1 if move.pieceCaptured[0] == 'b' else move.endRow - 1
+                endSquare = p.Rect(move.endCol * SQ_SIZE, enPassantRow * SQ_SIZE, SQ_SIZE, SQ_SIZE)
             screen.blit(IMAGES[move.pieceCaptured], endSquare)
+
+        #
+        if move.pieceMoved != '--':
+            screen.blit(IMAGES[move.pieceMoved], endSquare)
         #
         screen.blit(IMAGES[move.pieceMoved], p.Rect(c * SQ_SIZE, r * SQ_SIZE, SQ_SIZE, SQ_SIZE))
         p.display.flip()
         #
-        clock.tick(200)
+        clock.tick(150)
 
 def drawText(screen, text):
     font = p.font.SysFont("Helvitca", 32, True, False)
