@@ -3,8 +3,8 @@ import random
 pieceScore = {"K": 0, "Q": 10, "R": 5, "B": 3, "N": 3, "p": 1}
 CHECKMATE = 1000
 STALEMATE = 0 # >0 => white win : <0 black win
-DEPTH = 4
-nextMove = None
+DEPTH = 2
+#nextMove = None
 
 def findRandomMove(validMoves):
     return validMoves[random.randint(0, len(validMoves)-1)]
@@ -43,7 +43,9 @@ def findBestMove(gs, validMoves):
 
 def findBestMinimaxMove(gs, validMoves):
     global nextMove
-    findMiniMax(gs, validMoves, DEPTH, gs.whiteToMove)      
+    nextMove = None
+    random.shuffle(validMoves)
+    findMoveNegamax(gs, validMoves, DEPTH, 1 if gs.whiteToMove else -1)      
     return nextMove
 
 def findMiniMax(gs, validMoves, depth, humanTurn):
@@ -75,6 +77,24 @@ def findMiniMax(gs, validMoves, depth, humanTurn):
                 if depth == DEPTH:
                     nextMove = move
         return minScore
+
+def findMoveNegamax(gs, validMoves, depth, turnMutiplayer):
+    global nextMove
+    if depth == 0:
+        return scoreMaterial(gs.board) * scoreBoard(gs)
+    
+    maxScore = -CHECKMATE
+    for move in validMoves:
+        gs.makeMove(move)
+        nextMove = gs.getValidMoves()
+        score = -findMoveNegamax(gs, nextMove, depth-1, -turnMutiplayer)
+        if score > maxScore:
+            maxScore = score
+            if depth == DEPTH:
+                nextMove = move
+        gs.undoMove()
+    return maxScore
+
 
 #white điểm càng cao càng tốt, black điểm càng thấp càng tốt
 def scoreBoard(gs):
