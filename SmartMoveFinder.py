@@ -3,7 +3,7 @@ import random
 pieceScore = {"K": 0, "Q": 10, "R": 5, "B": 3, "N": 3, "p": 1}
 CHECKMATE = 1000
 STALEMATE = 0 # >0 => white win : <0 black win
-DEPTH = 2
+DEPTH = 4
 nextMove = None
 
 def findRandomMove(validMoves):
