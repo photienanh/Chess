@@ -4,7 +4,7 @@ pieceScore = {"K": 0, "Q": 10, "R": 5, "B": 3, "N": 3, "p": 1}
 CHECKMATE = 1000
 STALEMATE = 0 # >0 => white win : <0 black win
 DEPTH = 2
-#nextMove = None
+nextMove = None
 
 def findRandomMove(validMoves):
     return validMoves[random.randint(0, len(validMoves)-1)]
@@ -47,36 +47,6 @@ def findBestMinimaxMove(gs, validMoves):
     random.shuffle(validMoves)
     findMoveNegamax(gs, validMoves, DEPTH, 1 if gs.whiteToMove else -1)      
     return nextMove
-
-def findMiniMax(gs, validMoves, depth, humanTurn):
-    global nextMove
-    if depth == 0:
-        return scoreMaterial(gs.board)
-    
-    if humanTurn:
-        maxScore = -CHECKMATE
-        for move in validMoves:
-            gs.makeMove(move)
-            nextMove = gs.getValidMoves()
-            score = findMiniMax(gs, nextMove, depth - 1, humanTurn = False)
-            if score > maxScore:
-                maxScore = score
-                if depth == DEPTH:
-                    nextMove = move
-            gs.undoMove()
-        return maxScore
-
-    else:
-        minScore = CHECKMATE
-        for move in validMoves:
-            gs.makeMove(move)
-            nextMove = gs.getValidMoves() 
-            score = findMiniMax(gs, nextMove, depth - 1, humanTurn = True)
-            if score < minScore:
-                minScore = score
-                if depth == DEPTH:
-                    nextMove = move
-        return minScore
 
 def findMoveNegamax(gs, validMoves, depth, turnMutiplayer):
     global nextMove
