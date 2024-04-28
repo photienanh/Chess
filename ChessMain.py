@@ -7,8 +7,8 @@ SQ_SIZE = HEIGHT // DIMENSION
 MAX_FPS = 15
 IMAGES = {}
 
-playerOne = True # True = playerTurn = whiteTurn
-playerTwo = True
+playerOne = False # True = playerTurn = whiteTurn
+playerTwo = False
 
 # Khởi tạo từ điển của các ảnh
 def loadImages():
@@ -35,6 +35,7 @@ def main():
     # Lưu lại các lần nhấp chuột
     playerClicks = []
     gameOver = False
+    
 
     while running:
         humanTurn = (gs.whiteToMove and playerOne) or (not gs.whiteToMove and playerTwo)

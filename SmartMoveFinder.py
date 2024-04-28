@@ -1,10 +1,12 @@
 import random
+from ChessEngine import Move
 
 pieceScore = {"K": 0, "Q": 10, "R": 5, "B": 3, "N": 3, "p": 1}
 CHECKMATE = 1000
 STALEMATE = 0 # >0 => white win : <0 black win
 DEPTH = 2
-nextMove = None
+global nextMove
+
 
 def findRandomMove(validMoves):
     return validMoves[random.randint(0, len(validMoves)-1)]
@@ -42,34 +44,39 @@ def findBestMove(gs, validMoves):
     return bestAIMove
 
 def findBestMinimaxMove(gs, validMoves):
-    global nextMove
+    global nextMove, counter
     nextMove = None
+    counter = 0
     random.shuffle(validMoves)
-    findMoveNegamax(gs, validMoves, DEPTH, 1 if gs.whiteToMove else -1)      
+    findMoveNegamax(gs, validMoves, DEPTH, -CHECKMATE, CHECKMATE, 1 if gs.whiteToMove else -1)      
     return nextMove
 
-def findMoveNegamax(gs, validMoves, depth, turnMutiplayer):
-    global nextMove
+def findMoveNegamax(gs, validMoves, depth, alpha, beta, turnMutiplayer):
+    global nextMove, counter
+    counter += 1
     if depth == 0:
         return scoreMaterial(gs.board) * scoreBoard(gs)
     
     maxScore = -CHECKMATE
     for move in validMoves:
         gs.makeMove(move)
-        nextMove = gs.getValidMoves()
-        score = -findMoveNegamax(gs, nextMove, depth-1, -turnMutiplayer)
+        nextValidMoves = gs.getValidMoves()
+        score = -findMoveNegamax(gs, nextValidMoves, depth-1,-alpha, -beta, -turnMutiplayer)
         if score > maxScore:
             maxScore = score
             if depth == DEPTH:
                 nextMove = move
         gs.undoMove()
+        if maxScore > alpha:
+            alpha = maxScore
+        if alpha >= beta:
+            break
     return maxScore
-
 
 #white điểm càng cao càng tốt, black điểm càng thấp càng tốt
 def scoreBoard(gs):
     if gs.checkMate:
-        if gs.WhiteToMove:
+        if gs.whiteToMove:
             return -CHECKMATE # black win
         else:
             return CHECKMATE #white win
