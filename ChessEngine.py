@@ -301,10 +301,12 @@ class GameState():
             moveAmount = -1
             startRow = 6
             enemyColor = 'b'
+            kingRow, kingCol = self.whiteKingLocation
         else:
             moveAmount = 1
             startRow = 1
             enemyColor = 'w'
+            kingRow, kingCol = self.blackKingLocation
 
         if self.board[r + moveAmount][c] == '--':
             if not piecePinned or pinDirection == (moveAmount, 0):
@@ -317,14 +319,50 @@ class GameState():
                 if self.board[r + moveAmount][c - 1][0] == enemyColor:
                     moves.append(Move((r, c), (r + moveAmount, c - 1), self.board))
                 if (r + moveAmount, c - 1) == self.enPassantPossible:
-                    moves.append(Move((r, c), (r + moveAmount, c - 1), self.board, enPassant=True))
+                    attackingPiece = blockkingPiece = False
+                    if kingRow == r:
+                        if kingCol < r:
+                            insideRange = range(kingCol + 1, c - 1)
+                            outsideRange = range(c + 1, 8)
+                        else:
+                            insideRange = range(kingCol - 1, c, -1)
+                            outsideRange = range(c - 2, -1, -1)
+                        for i in insideRange:
+                            if self.board[r][i] != '--':
+                                blockkingPiece = True
+                        for i in outsideRange:
+                            square = self.board[r][i]
+                            if square[0] == enemyColor and (square[1] == 'R' or square == 'Q'):
+                                blockkingPiece = True
+                            elif square != '--':
+                                blockkingPiece = True
+                    if not attackingPiece or blockkingPiece:
+                        moves.append(Move((r, c), (r + moveAmount, c - 1), self.board, enPassant=True))
 
         if c + 1 <= 7:
             if not piecePinned or pinDirection == (moveAmount,1):
                 if self.board[r + moveAmount][c + 1][0] == enemyColor:
                     moves.append(Move((r, c), (r + moveAmount, c + 1), self.board))
                 if (r + moveAmount, c + 1) == self.enPassantPossible:
-                    moves.append(Move((r, c), (r + moveAmount, c + 1), self.board, enPassant=True))
+                    attackingPiece = blockkingPiece = False
+                    if kingRow == r:
+                        if kingCol < r:
+                            insideRange = range(kingCol + 1, c)
+                            outsideRange = range(c + 2, 8)
+                        else:
+                            insideRange = range(kingCol - 1, c + 1, -1)
+                            outsideRange = range(c - 1, -1, -1)
+                        for i in insideRange:
+                            if self.board[r][i] != '--':
+                                blockkingPiece = True
+                        for i in outsideRange:
+                            square = self.board[r][i]
+                            if square[0] == enemyColor and (square[1] == 'R' or square == 'Q'):
+                                blockkingPiece = True
+                            elif square != '--':
+                                blockkingPiece = True
+                    if not attackingPiece or blockkingPiece:
+                        moves.append(Move((r, c), (r + moveAmount, c + 1), self.board, enPassant=True))
 
         # if self.whiteToMove:
         #     if self.board[r-1][c] == "--":
@@ -449,7 +487,7 @@ class GameState():
             if 0 <= endRow < 8 and 0 <= endCol < 8:
                 endPiece = self.board[endRow][endCol]
                 if endPiece[0] != allyColor:
-                    if allyColor =='w':
+                    if allyColor == 'w':
                         self.whiteKingLocation = (endRow, endCol)
                     else:
                         self.blackKingLocation = (endRow, endCol)

@@ -8,7 +8,7 @@ MAX_FPS = 15
 IMAGES = {}
 
 playerOne = True # True = playerTurn = whiteTurn
-playerTwo = False
+playerTwo = True
 
 # Khởi tạo từ điển của các ảnh
 def loadImages():
@@ -48,7 +48,7 @@ def main():
                     location = p.mouse.get_pos() 
                     col = location[0] // SQ_SIZE
                     row = location[1] // SQ_SIZE
-                    if sqSelected == (row, col):
+                    if sqSelected == (row, col) or col >= 8:
                         # Bỏ chọn
                         sqSelected = ()
                         # Xóa danh sách
