@@ -548,6 +548,9 @@ class Move():
             self.pieceCaptured == 'bp' if self.pieceMoved == 'wp' else 'wp' 
         self.moveID = self.startRow * 1000 + self.startCol * 100 + self.endRow * 10 + self.endCol
     
+    def create_none():
+        return None
+
     def __eq__(self, other):
         if isinstance(other, Move):
             return self.moveID == other.moveID
