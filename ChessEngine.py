@@ -53,7 +53,7 @@ class GameState():
             if move.endCol - move.startCol == 2:
                 self.board[move.endRow][move.endCol-1] = self.board[move.endRow][move.endCol+1]
                 self.board[move.endRow][move.endCol+1] = '--'
-            else:
+            if move.startCol - move.endCol == 2:
                 self.board[move.endRow][move.endCol+1] = self.board[move.endRow][move.endCol-2]
                 self.board[move.endRow][move.endCol-2] = '--'
         
@@ -147,6 +147,7 @@ class GameState():
         else:
             return self.squareUnderAttack(self.blackKingLocation[0],self.blackKingLocation[1])
     
+    # Đảo người chơi (trắng, đen)
     def squareUnderAttack(self, r, c, allyColor):
         # self.whiteToMove = not self.whiteToMove
         # oppMoves = self.getAllPossibleMoves()
@@ -254,6 +255,7 @@ class GameState():
                     checks.append((endRow, endCol, m[0], m[1]))
         return inCheck, pins, checks
     
+    # Cập nhật quyền nhập thành
     def updateCastleRights(self, move):
         if move.pieceMoved == 'wk':
             self.currentCastlingRight.wks = False
@@ -491,6 +493,7 @@ class GameState():
                         self.whiteKingLocation = (endRow, endCol)
                     else:
                         self.blackKingLocation = (endRow, endCol)
+                    
                     inCheck, pins, check = self.checkForPinsAndChecks()
                     
                     if not inCheck:
@@ -514,12 +517,14 @@ class GameState():
     def getKingsideCastleMoves(self, r, c, moves, allyColor):
         if self.board[r][c+1] == '--' and self.board[r][c+2] == '--' and \
          not self.squareUnderAttack(r, c+1, allyColor) and not self.squareUnderAttack(r, c+2, allyColor):
-            moves.append(Move((r,c), (r, c+2), self.board, castle=True))
+            if self.board[r][c+3] == allyColor + 'R':
+                moves.append(Move((r,c), (r, c+2), self.board, castle=True))
     
     def getQueensideCastleMoves(self, r, c, moves, allyColor):
         if self.board[r][c-1] == '--' and self.board[r][c-2] == '--' and self.board[r][c-3] == '--' and \
          not self.squareUnderAttack(r, c-1,allyColor) and not self.squareUnderAttack(r, c-2, allyColor):
-            moves.append(Move((r,c), (r, c-2), self.board, castle=True))
+            if self.board[r][c-4] == allyColor + 'R':
+                moves.append(Move((r,c), (r, c-2), self.board, castle=True))
 
 class Move():
     ranksToRows = {"1":7,"2":6,"3":5,"4":4,
