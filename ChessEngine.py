@@ -63,6 +63,7 @@ class GameState():
         elif move.pieceMoved == "bK":
             self.blackKingLocation = (move.endRow, move.endCol)
         
+        # Bắt quân qua đường
         if move.pieceMoved[1] == 'p' and abs(move.startRow - move.endRow) == 2:
             self.enPassantPossible = ((move.startRow + move.endRow)//2, move.endCol)
         else:
@@ -71,10 +72,12 @@ class GameState():
         if move.enPassant:
             self.board[move.startRow][move.endCol] = '--'
         
+        # Tốt phong hàm
         if move.pawnPromotion:
             promotedPiece = 'Q'
             self.board[move.endRow][move.endCol] = move.pieceMoved[0] + promotedPiece
         
+        # Xử lý nhập thành
         if move.castle:
             if move.endCol - move.startCol == 2:
                 self.board[move.endRow][move.endCol-1] = self.board[move.endRow][move.endCol+1]
@@ -83,8 +86,10 @@ class GameState():
                 self.board[move.endRow][move.endCol+1] = self.board[move.endRow][move.endCol-2]
                 self.board[move.endRow][move.endCol-2] = '--'
         
+        # Cập nhật bắt quân qua đường
         self.enPassantPossibleLog.append(self.enPassantPossible)
 
+        # Cập nhật trạng thái nhập thành
         self.updateCastleRights(move)
         self.castleRightsLog.append(CastleRights(self.currentCastlingRight.wks, self.currentCastlingRight.bks, 
                                              self.currentCastlingRight.wqs, self.currentCastlingRight.bqs))
@@ -92,21 +97,26 @@ class GameState():
     # Hoàn tác nước đi trước đó.
     def undoMove(self):
         if len(self.moveLog) != 0:
-            move = self.moveLog.pop()
-            self.board[move.startRow][move.startCol] = move.pieceMoved
-            self.board[move.endRow][move.endCol] = move.pieceCaptured
-            self.whiteToMove = not self.whiteToMove
+            move = self.moveLog.pop() #Lấy nước đi cuối cùng
+            self.board[move.startRow][move.startCol] = move.pieceMoved #Trả quân về vị trí ban đầu
+            self.board[move.endRow][move.endCol] = move.pieceCaptured #Trả lại quân bị ăn
+            self.whiteToMove = not self.whiteToMove #Đảo chiều người chơi
+
+            # Trả lại vị trí của vua
             if move.pieceMoved == "wK":
                 self.whiteKingLocation = (move.startRow, move.startCol)
             elif move.pieceMoved == "bK":
                 self.blackKingLocation = (move.startRow, move.startCol)
+
+            # Trả lại vị trí quân tốt bị bắt quân qua đường
             if move.enPassant:
                 self.board[move.endRow][move.endCol] = "--"
                 self.board[move.startRow][move.endCol] = move.pieceCaptured
-            self.enPassantPossibleLog.pop()
+            self.enPassantPossibleLog.pop() 
             self.enPassantPossible = self.enPassantPossibleLog[-1]
 
-            self.castleRightsLog.pop()
+            # Trả lại trạng thái nhập thành
+            self.castleRightsLog.pop() 
             newRights = self.castleRightsLog[-1]
             self.currentCastlingRight = CastleRights(newRights.wks, newRights.bks, newRights.wqs, newRights.bqs)
             
@@ -127,6 +137,7 @@ class GameState():
         moves = []
         self.inCheck, self.pins, self.checks = self.checkForPinsAndChecks()
         
+        # Xác định vị trí quân vua của người chơi hiện tại
         if self.whiteToMove:
             kingRow = self.whiteKingLocation[0]
             kingCol = self.whiteKingLocation[1]
@@ -134,28 +145,30 @@ class GameState():
             kingRow = self.blackKingLocation[0]
             kingCol = self.blackKingLocation[1]
 
-        if self.inCheck:
-            if len(self.checks) == 1:
-                moves = self.getAllPossibleMoves()
+        if self.inCheck: #Nếu bị chiếu
+            if len(self.checks) == 1: #Nếu chỉ có 1 quân chiếu(không phải quân mã)
+                moves = self.getAllPossibleMoves() #Xác định tất cả nước có thể đi
                 check = self.checks[0]
+                # Xác định vị trí quân cờ đang chiếu
                 checkRow = check[0]
                 checkCol = check[1]
                 pieceChecking = self.board[checkRow][checkCol]
-                validSquares = []
+                validSquares = [] #Tạo danh sách các ô có thể di chuyển để bảo vệ vua
 
-                if pieceChecking[1] == 'N':
+                if pieceChecking[1] == 'N': #Nếu quân chiếu là mã
                     validSquares = [(checkRow, checkCol)]
-                else:
+                else: #Xác định hướng quân chiếu
                     for i in range(1, 8):
                         validSquare = (kingRow + check[2] * i, kingCol + check[3] * i)
                         validSquares.append(validSquare)
                         if validSquare[0] == checkRow and validSquare[1] == checkCol:
                             break
                 
-                for i in range(len(moves) - 1, -1, -1):
-                    if moves[i].pieceMoved[1] != 'K':
-                        if not (moves[i].endRow, moves[i].endCol) in validSquares:
-                            moves.remove(moves[i])
+                    # Loại bỏ các nước đi không bảo vệ được vua
+                    for i in range(len(moves) - 1, -1, -1): #Duyệt từ cuối danh sách lên đầu
+                        if moves[i].pieceMoved[1] != 'K':
+                            if not (moves[i].endRow, moves[i].endCol) in validSquares:
+                                moves.remove(moves[i])
             else:
                 self.getKingMoves(kingRow, kingCol, moves)
         else:
@@ -181,18 +194,20 @@ class GameState():
     # Kiểm tra 1 ô trên bàn cờ có bị tấn công hay không
     def squareUnderAttack(self, r, c, allyColor):
         enemyColor = 'w' if allyColor == 'b' else 'b'
-        directions = ((-1,0), (0,-1), (1,0), (0,1), (-1,-1), (-1,1), (1,-1), (1,1))
-        for j in range(len(directions)):
+        directions = ((-1,0), (0,-1), (1,0), (0,1), (-1,-1), (-1,1), (1,-1), (1,1)) #8 hướng di chuyển
+        for j in range(len(directions)): #Duyệt qua các hướng di chuyển
             d = directions[j]
-            for i in range(1, 8):
+            for i in range(1, 8): #Tăng dần khoảng cách các hướng
                 endRow = r + d[0]*i
                 endCol = c + d[1]*i
-                if 0 <= endRow <8 and 0 <= endCol < 8:
+                if 0 <= endRow <8 and 0 <= endCol < 8: #Duyệt trong phạm vi bàn cờ
                     endPiece = self.board[endRow][endCol]
-                    if endPiece[0] == allyColor:
+                    if endPiece[0] == allyColor: #Nếu là quân đồng minh
                         break
-                    elif endPiece[0] == enemyColor:
-                        type = endPiece[1]
+                    elif endPiece[0] == enemyColor: #Nếu là quân địch
+                        type = endPiece[1] 
+                        
+                        #Xác định loại quân và hướng di chuyển
                         if (0 <= j <= 3 and type == 'R') or \
                                 (4 <= j <=7 and type == 'B') or \
                                 (i == 1 and type == 'p' and (
@@ -203,7 +218,8 @@ class GameState():
                             break
                 else:
                     break
-        knightMoves = ((-2,-1), (-2,1), (-1,-2), (-1,2), (1,-2), (1,2), (2,-1), (2,1))
+                
+        knightMoves = ((-2,-1), (-2,1), (-1,-2), (-1,2), (1,-2), (1,2), (2,-1), (2,1)) #Hướng di chuyển của quân mã
         for m in knightMoves:
             endRow = r + m[0]
             endCol = c + m[1]
@@ -215,11 +231,13 @@ class GameState():
     
     #Lấy tất cả các nước đi có thể của người chơi hiện tại.
     def getAllPossibleMoves(self):
-        moves = []
+        moves = [] #Khởi tạo danh sách các nước đi hợp lệ
+
+        # Duyệt toàn bộ bàn cờ
         for r in range(len(self.board)):
             for c in range(len(self.board[r])):
-                turn = self.board[r][c][0]
-                if (turn == 'w' and self.whiteToMove) or (turn == 'b' and not self.whiteToMove):
+                turn = self.board[r][c][0] #Xác định màu quân
+                if (turn == 'w' and self.whiteToMove) or (turn == 'b' and not self.whiteToMove): 
                     piece = self.board[r][c][1]
                     self.moveFunctions[piece](r, c, moves)
         return moves
