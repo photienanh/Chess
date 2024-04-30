@@ -1,10 +1,13 @@
+# Lỗi
+# undoMove tốt đi 2 nước k hiển thị lại hình ảnh
+
 import pygame as p
 import ChessEngine, SmartMoveFinder
 
 WIDTH = HEIGHT = 512 # Kích thước cửa sổ
-DIMENSION = 8 # Kích thước bảng cờ vua 8x8
-SQ_SIZE = HEIGHT // DIMENSION
-MAX_FPS = 15
+DIMENSION = 8 # Kích thước bảng cờ vua 8x8 ô
+SQ_SIZE = HEIGHT // DIMENSION # Kích thước mỗi ô trên bàn cờ
+MAX_FPS = 15 # Số lần lặp trên 1 giây để cập nhật trạng thái trò chơi
 IMAGES = {}
 
 playerOne = True # True = playerTurn = whiteTurn
@@ -18,8 +21,8 @@ def loadImages():
 
 # Xử lý dữ liệu đầu vào của người dùng và cập nhật đồ họa
 def main():
-    p.init()
-    screen = p.display.set_mode((WIDTH, HEIGHT))
+    p.init() # Tạo môi trường để sd chức năng của Pygame
+    screen = p.display.set_mode((WIDTH, HEIGHT)) # Hiển thị cửa số có kích thước WxH
     clock = p.time.Clock()
     screen.fill(p.Color("white"))
     gs = ChessEngine.GameState()
