@@ -42,7 +42,11 @@ class GameState():
         self.currentCastlingRight = CastleRights(True,True,True,True)
         self.castleRightsLog = [CastleRights(self.currentCastlingRight.wks, self.currentCastlingRight.bks, 
                                              self.currentCastlingRight.wqs, self.currentCastlingRight.bqs)]
-    
+        
+    # Thực hiện một nước đi trên bàn cờ.
+    # Cập nhật bàn cờ với vị trí mới của quân cờ.
+    # Thêm nước đi vào lịch sử nước đi.
+    # Cập nhật các biến khác như lượt của người chơi, vị trí của vua, quyền nhập thành, v.v.
     def makeMove(self, move):        
         self.board[move.endRow][move.endCol] = move.pieceMoved
         self.board[move.startRow][move.startCol] = "--"
@@ -81,6 +85,7 @@ class GameState():
         self.castleRightsLog.append(CastleRights(self.currentCastlingRight.wks, self.currentCastlingRight.bks, 
                                              self.currentCastlingRight.wqs, self.currentCastlingRight.bqs))
         
+    # Hoàn tác nước đi trước đó.
     def undoMove(self):
         if len(self.moveLog) != 0:
             move = self.moveLog.pop()
@@ -111,6 +116,9 @@ class GameState():
             self.checkMate = False
             self.staleMate = False
 
+    # Trả về danh sách các nước đi hợp lệ cho người chơi hiện tại.
+    # Kiểm tra xem người chơi có đang bị chiếu không và xem có nước đi nào để thoát khỏi chiếu không.
+    # Kiểm tra xem trò chơi có đang ở trong tình trạng chiếu mạng (checkmate) hay hòa (stalemate) không.
     def getValidMoves(self):
         moves = []
         self.inCheck, self.pins, self.checks = self.checkForPinsAndChecks()
@@ -158,7 +166,8 @@ class GameState():
             self.checkMate = False
             self.staleMate = False
         return moves
-                     
+
+    # Kiểm tra xem vua của người chơi hiện tại có đang bị chiếu không hay không.
     def inCheck(self):
         if self.whiteToMove:
             return self.squareUnderAttack(self.whiteKingLocation[0],self.whiteKingLocation[1])
@@ -199,7 +208,8 @@ class GameState():
                 if endPiece[0] == enemyColor and endPiece[1] == 'N':
                     return True
         return False
-
+    
+    #Lấy tất cả các nước đi có thể của người chơi hiện tại.
     def getAllPossibleMoves(self):
         moves = []
         for r in range(len(self.board)):
