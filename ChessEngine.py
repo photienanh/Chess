@@ -4,8 +4,10 @@
 # 3. cùng 1 thế cờ 3 lần 1 ng
 # 4. thiếu quân
 
+
 # Chưa làm
 # tốt phong quân
+
 
 # Lỗi
 # 1.
@@ -55,7 +57,7 @@ class GameState():
         self.board[move.endRow][move.endCol] = move.pieceMoved
         self.board[move.startRow][move.startCol] = "--"
         self.moveLog.append(move)
-        # Đảo chiều người chơi
+        # Đảo chiều người chơi.
         self.whiteToMove = not self.whiteToMove
         
         if move.pieceMoved == "wK":
@@ -178,7 +180,7 @@ class GameState():
         else:
             return self.squareUnderAttack(self.blackKingLocation[0],self.blackKingLocation[1])
     
-    # Kiểm tra 1 ô trên bàn cờ có bị tấn công hay không
+    # Kiểm tra 1 ô trên bàn cờ có bị tấn công hay không.
     def squareUnderAttack(self, r, c, allyColor):
         enemyColor = 'w' if allyColor == 'b' else 'b'
         directions = ((-1,0), (0,-1), (1,0), (0,1), (-1,-1), (-1,1), (1,-1), (1,1))
@@ -300,6 +302,7 @@ class GameState():
                     self.currentCastlingRight.bqs = False
                 elif move.startCol == 7:
                     self.currentCastlingRight.bks = False
+        
         # ĐỪNG XÓA!!!!!
         # if move.pieceCaptured == 'wR':
         #     if move.endRow == 7:
@@ -340,6 +343,7 @@ class GameState():
                 moves.append(Move((r, c), (r + moveAmount, c), self.board))
                 if r == startRow and self.board[r + 2 * moveAmount][c] == '--':
                     moves.append(Move((r, c), (r + 2 * moveAmount, c), self.board))
+        else: return "list index out of range: {r + moveAmout}" 
         
         if c - 1 >= 0:
             if not piecePinned or pinDirection == (moveAmount, -1):
