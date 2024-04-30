@@ -8,12 +8,16 @@
 # tốt phong quân
 
 # Lỗi
+# 1.
 #   File "d:\Bài tập UET\Cơ sở AI\Chess\Chess\ChessEngine.py
 #     self.moveFunctions[piece](r, c, moves)
 # ", line 307, in getPawnMoves
 #     if self.board[r + moveAmount][c] == '--':
 #        ~~~~~~~~~~^^^^^^^^^^^^^^^^
 # IndexError: list index out of range
+
+# 2. 
+# không nhập thành nếu xe hoặc vua đã di chuyển
 
 class GameState():
     def __init__(self):
@@ -251,7 +255,7 @@ class GameState():
                     elif endPiece[0] == enemyColor:
                         type = endPiece[1]
                         if (0 <= j <= 3 and type == 'R') or \
-                            (4 <= j <= 7 and type == "B") or \
+                            (4 <= j <= 7 and type == 'B') or \
                             (i == 1 and type == 'p' and ((enemyColor == 'w' and 6 <= j <= 7) or (enemyColor == 'b' and 4 <= j <= 5))) or \
                             (type == 'Q') or (i == 1 and type == 'K'):
                             if possiblePin == ():
