@@ -343,7 +343,7 @@ class GameState():
                 moves.append(Move((r, c), (r + moveAmount, c), self.board))
                 if r == startRow and self.board[r + 2 * moveAmount][c] == '--':
                     moves.append(Move((r, c), (r + 2 * moveAmount, c), self.board))
-        else: return "list index out of range: {r + moveAmout}" 
+        else: return "list index out of range: {self.board[r][c]}, r: {r + moveAmout}" 
         
         if c - 1 >= 0:
             if not piecePinned or pinDirection == (moveAmount, -1):
