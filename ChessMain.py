@@ -7,8 +7,8 @@ SQ_SIZE = HEIGHT // DIMENSION
 MAX_FPS = 15
 IMAGES = {}
 
-playerOne = False # True = playerTurn = whiteTurn
-playerTwo = False
+playerOne = True # True = playerTurn = whiteTurn
+playerTwo = True
 
 # Khởi tạo từ điển của các ảnh
 def loadImages():
@@ -112,9 +112,9 @@ def main():
         if gs.checkMate:
             gameOver = True
             if gs.whiteToMove:
-                drawText(screen, 'Black win.')
+                drawText(screen, 'Black win.', '#363636')
             else:
-                drawText(screen, 'White win.')
+                drawText(screen, 'White win.', '#A9A9A9')
         elif gs.staleMate:
             gameOver = True
             drawText(screen, 'Stalemate.')
@@ -156,7 +156,7 @@ def drawBoard(screen):
             color = colors[((r + c) % 2)]
             p.draw.rect(screen, color, p.Rect(c * SQ_SIZE, r * SQ_SIZE, SQ_SIZE, SQ_SIZE))
 
-# Vẽ quân cờ lên bảng sử dụng GameState.board
+# Vẽ quân cờ lên bảng
 def drawPieces(screen, board):
     for r in range(DIMENSION):
         for c in range(DIMENSION):
@@ -164,12 +164,12 @@ def drawPieces(screen, board):
             if piece != "--":
                 screen.blit(IMAGES[piece], p.Rect(c * SQ_SIZE,r * SQ_SIZE, SQ_SIZE, SQ_SIZE))
 
-# Hành động di chuyển
+# Hoạt ảnh di chuyển
 def animateMove(move, screen, board, clock):
     global colors
     dR = move.endRow - move.startRow
     dC = move.endCol - move.startCol
-    frameCount = (abs(dR) + abs(dC)) * 2
+    frameCount = (abs(dR) + abs(dC)) * 3
     for frame in range(frameCount + 1):
         r, c = (move.startRow + dR * frame / frameCount, move.startCol + dC * frame / frameCount)
         drawBoard(screen)
@@ -187,16 +187,15 @@ def animateMove(move, screen, board, clock):
 
         #
         if move.pieceMoved != '--':
-            screen.blit(IMAGES[move.pieceMoved], endSquare)
+            screen.blit(IMAGES[move.pieceMoved], p.Rect(c * SQ_SIZE, r * SQ_SIZE, SQ_SIZE, SQ_SIZE))
         #
-        screen.blit(IMAGES[move.pieceMoved], p.Rect(c * SQ_SIZE, r * SQ_SIZE, SQ_SIZE, SQ_SIZE))
         p.display.flip()
         #
         clock.tick(150)
 
-def drawText(screen, text):
-    font = p.font.SysFont("Helvitca", 32, True, False)
-    textObject = font.render(text, 0, p.Color('Black'))
+def drawText(screen, text, color):
+    font = p.font.SysFont("Calibri", 32, True, False)
+    textObject = font.render(text, 0, p.Color(color))
     textLocation = p.Rect(0, 0, WIDTH, HEIGHT).move(WIDTH / 2 - textObject.get_width() / 2, HEIGHT / 2 - textObject.get_height() / 2)
     screen.blit(textObject, textLocation.move(2, 2))
 
