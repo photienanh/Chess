@@ -22,7 +22,7 @@
 # không nhập thành nếu xe hoặc vua đã di chuyển
 
 # 3. (xong)
-# không được ăn tốt sang đường khi vua bị chiếu
+# không được ăn tốt sang đường khi xe hoặc hậu hướng vào vua
 
 4.
 # khi tối qua đường chiếu tướng tốt đồng minh không thể bắt nó
