@@ -1,4 +1,5 @@
 # Lỗi
+# 1.(xong)
 # undoMove tốt đi 2 nước k hiển thị lại hình ảnh
 
 import pygame as p
@@ -24,12 +25,10 @@ def main():
     p.init() # Tạo môi trường để sd chức năng của Pygame
     screen = p.display.set_mode((WIDTH, HEIGHT)) # Hiển thị cửa số có kích thước WxH
     clock = p.time.Clock()
-    screen.fill(p.Color("white"))
+    screen.fill(p.Color("white")) # Vẽ cửa sổ màu trắng
     gs = ChessEngine.GameState()
     validMoves = gs.getValidMoves()
-    #
     moveMade = False
-    #
     animate = False
     loadImages()
     running = True
@@ -52,19 +51,19 @@ def main():
                     location = p.mouse.get_pos() 
                     col = location[0] // SQ_SIZE
                     row = location[1] // SQ_SIZE
-                    if sqSelected == (row, col) or col >= 8:
+                    # Nếu chọn cùng 1 ô
+                    if sqSelected == (row, col):
                         # Bỏ chọn
                         sqSelected = ()
                         # Xóa danh sách
                         playerClicks = []
                     else:
                         sqSelected = (row, col)
-                        # Thêm 2 lần nhấp chuột đầu tiên
                         playerClicks.append(sqSelected)
-                    # Nhiều hơn 2 lần nhấp chuột
+                    
                     if len(playerClicks) == 2:
+                        # Tạo đối tượng move có lớp Move(điểm đầu, điểm cuối, bàn cờ)
                         move = ChessEngine.Move(playerClicks[0], playerClicks[1], gs.board)
-                        print(move.getChessLocation())
                         for i in range(len(validMoves)):
                             if move == validMoves[i]:
                                 gs.makeMove(validMoves[i])
@@ -72,6 +71,7 @@ def main():
                                 animate = True
                                 sqSelected = ()
                                 playerClicks = []
+                        
                         if not moveMade:
                             playerClicks = [sqSelected]
             # Xử lý phím
@@ -183,9 +183,6 @@ def animateMove(move, screen, board, clock):
         p.draw.rect(screen, color, endSquare)
 
         if move.pieceCaptured != '--':
-            if move.enPassant:
-                enPassantRow = move.endRow + 1 if move.pieceCaptured[0] == 'b' else move.endRow - 1
-                endSquare = p.Rect(move.endCol * SQ_SIZE, enPassantRow * SQ_SIZE, SQ_SIZE, SQ_SIZE)
             screen.blit(IMAGES[move.pieceCaptured], endSquare)
 
         #
