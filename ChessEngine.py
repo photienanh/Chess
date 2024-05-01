@@ -24,8 +24,8 @@
 # 3. (xong)
 # không được ăn tốt sang đường khi xe hoặc hậu hướng vào vua
 
-4.
-# khi tối qua đường chiếu tướng tốt đồng minh không thể bắt nó
+# 4. (xong)
+# khi tốt qua đường chiếu tướng tốt đồng minh không thể bắt nó
 
 class GameState():
     def __init__(self):
@@ -71,12 +71,13 @@ class GameState():
         elif move.pieceMoved == "bK":
             self.blackKingLocation = (move.endRow, move.endCol)
         
-        # Bắt quân qua đường
+        # Có thể bắt tốt qua đường
         if move.pieceMoved[1] == 'p' and abs(move.startRow - move.endRow) == 2:
             self.enPassantPossible = ((move.startRow + move.endRow)//2, move.endCol)
         else:
             self.enPassantPossible = ()
         
+        # Bắt tốt qua đường
         if move.enPassant:
             self.board[move.startRow][move.endCol] = '--'
         
@@ -177,6 +178,8 @@ class GameState():
                     for i in range(len(moves) - 1, -1, -1): #Duyệt từ cuối danh sách lên đầu
                         if moves[i].pieceMoved[1] != 'K':
                             if not (moves[i].endRow, moves[i].endCol) in validSquares:
+                                if moves[i].enPassant:
+                                    continue
                                 moves.remove(moves[i])
             else:
                 self.getKingMoves(kingRow, kingCol, moves)
@@ -209,7 +212,7 @@ class GameState():
             for i in range(1, 8): #Tăng dần khoảng cách các hướng
                 endRow = r + d[0]*i
                 endCol = c + d[1]*i
-                if 0 <= endRow <8 and 0 <= endCol < 8: #Duyệt trong phạm vi bàn cờ
+                if 0 <= endRow < 8 and 0 <= endCol < 8: #Duyệt trong phạm vi bàn cờ
                     endPiece = self.board[endRow][endCol]
                     if endPiece[0] == allyColor: #Nếu là quân đồng minh
                         break
