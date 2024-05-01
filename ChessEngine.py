@@ -21,8 +21,11 @@
 # 2. (xong)
 # không nhập thành nếu xe hoặc vua đã di chuyển
 
-# 3. 
+# 3. (xong)
 # không được ăn tốt sang đường khi vua bị chiếu
+
+4.
+# khi tối qua đường chiếu tướng tốt đồng minh không thể bắt nó
 
 class GameState():
     def __init__(self):
@@ -116,7 +119,7 @@ class GameState():
             # Trả lại vị trí quân tốt bị bắt quân qua đường
             if move.enPassant:
                 self.board[move.endRow][move.endCol] = '--'
-                self.board[move.startRow][move.endCol] = 'bp'
+                self.board[move.startRow][move.endCol] = 'bp' if self.whiteToMove else 'wp'
             if len(self.enPassantPossibleLog) != 0:
                 self.enPassantPossibleLog.pop() 
                 self.enPassantPossible = self.enPassantPossibleLog[-1]
@@ -360,10 +363,12 @@ class GameState():
                     if (r + moveAmount, c - 1) == self.enPassantPossible:
                         attackingPiece = blockkingPiece = False
                         if kingRow == r:
-                            if kingCol < r:
+                            # kingCol bên trái con tốt
+                            if kingCol < c:
                                 insideRange = range(kingCol + 1, c - 1)
                                 outsideRange = range(c + 1, 8)
-                            else:
+                            # kingCol bên phải con tốt
+                            else: 
                                 insideRange = range(kingCol - 1, c, -1)
                                 outsideRange = range(c - 2, -1, -1)
                             for i in insideRange:
@@ -371,8 +376,8 @@ class GameState():
                                     blockkingPiece = True
                             for i in outsideRange:
                                 square = self.board[r][i]
-                                if square[0] == enemyColor and (square[1] == 'R' or square == 'Q'):
-                                    blockkingPiece = True
+                                if square[0] == enemyColor and (square[1] == 'R' or square[1] == 'Q'):
+                                    attackingPiece = True
                                 elif square != '--':
                                     blockkingPiece = True
                         if not attackingPiece or blockkingPiece:
@@ -386,7 +391,7 @@ class GameState():
                     if (r + moveAmount, c + 1) == self.enPassantPossible:
                         attackingPiece = blockkingPiece = False
                         if kingRow == r:
-                            if kingCol < r:
+                            if kingCol < c:
                                 insideRange = range(kingCol + 1, c)
                                 outsideRange = range(c + 2, 8)
                             else:
@@ -397,8 +402,8 @@ class GameState():
                                     blockkingPiece = True
                             for i in outsideRange:
                                 square = self.board[r][i]
-                                if square[0] == enemyColor and (square[1] == 'R' or square == 'Q'):
-                                    blockkingPiece = True
+                                if square[0] == enemyColor and (square[1] == 'R' or square[1] == 'Q'):
+                                    attackingPiece = True
                                 elif square != '--':
                                     blockkingPiece = True
                         if not attackingPiece or blockkingPiece:
