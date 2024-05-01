@@ -302,10 +302,10 @@ class GameState():
     
     # Cập nhật quyền nhập thành
     def updateCastleRights(self, move):
-        if move.pieceMoved == 'wk':
+        if move.pieceMoved == 'wK':
             self.currentCastlingRight.wks = False
             self.currentCastlingRight.wqs = False
-        elif move.pieceMoved == 'bk':
+        elif move.pieceMoved == 'bK':
             self.currentCastlingRight.bks = False
             self.currentCastlingRight.bqs = False
         elif move.pieceMoved == 'wR':
@@ -521,6 +521,7 @@ class GameState():
                         self.blackKingLocation = (r, c)
         self.getCastleMoves(r, c, moves, allyColor)
     
+    #Lỗi nhập thành
     def getCastleMoves(self, r, c, moves, allyColor):
         if (self.whiteToMove and self.currentCastlingRight.wks) or (not self.whiteToMove and self.currentCastlingRight.bks):
             self.getKingsideCastleMoves(r, c, moves, allyColor)
