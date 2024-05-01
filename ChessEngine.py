@@ -18,7 +18,7 @@
 #        ~~~~~~~~~~^^^^^^^^^^^^^^^^
 # IndexError: list index out of range
 
-# 2. 
+# 2. (xong)
 # không nhập thành nếu xe hoặc vua đã di chuyển
 
 class GameState():
