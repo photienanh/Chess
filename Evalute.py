@@ -1,8 +1,8 @@
-CHECKMATE = 100000
+CHECKMATE = 10000000
 STALEMATE = 0
 
 piece_value = {
-    "K": 2000, "Q": 900, "R": 500, "B": 330, "N": 320, "p": 100
+    "K": 0, "Q": 900, "R": 500, "B": 330, "N": 320, "p": 100
 }
 
 pawnEvalWhite = [
@@ -92,15 +92,15 @@ def evaluate_piece(piece, square, location) -> int:
     mapping = []
     if piece_type == "p":
         mapping = pawnEvalWhite if square == "w" else pawnEvalBlack
-    if piece_type == "K":
+    elif piece_type == "N":
         mapping = knightEval
-    if piece_type == "B":
+    elif piece_type == "B":
         mapping = bishopEvalWhite if square == "w" else bishopEvalBlack
-    if piece_type == "R":
+    elif piece_type == "R":
         mapping = rookEvalWhite if square == "w" else rookEvalBlack
-    if piece_type == "Q":
+    elif piece_type == "Q":
         mapping = queenEval
-    if piece_type == "K":
+    elif piece_type == "K":
         #if end_game:
         #    mapping = (
         #        kingEvalEndGameWhite
@@ -109,8 +109,8 @@ def evaluate_piece(piece, square, location) -> int:
         #    )
         #else:
         mapping = kingEvalWhite if square == "w" else kingEvalBlack
-
-    return mapping[location[0]][location[1]]
+    if 0 <= location[0] < 8 and 0 <= location[1] < 8:
+        return mapping[location[0]][location[1]]
 
 def evaluate_board(gs) -> float:
     total = 0
@@ -122,11 +122,11 @@ def evaluate_board(gs) -> float:
     elif gs.staleMate:
         return STALEMATE
 
-    for row in len(gs.board):
-        for square in len(row):
+    for row in range(8):
+        for square in range(8):
             piece = gs.board[row][square]
             if piece  == "--":
                 continue
             value = piece_value[piece[1]] + evaluate_piece(piece[1], piece[0], [row, square])
-            total += value if square[0] == "w" else -value
+            total += value if piece[0] == "w" else -value
     return total
