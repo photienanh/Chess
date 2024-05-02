@@ -125,6 +125,9 @@ class GameState():
                 self.enPassantPossibleLog.pop() 
                 self.enPassantPossible = self.enPassantPossibleLog[-1]
 
+            if move.pawnPromotion:
+                self.board[move.endRow][move.endCol] = move.pieceCaptured
+                self.board[move.startRow][move.startCol] = 'wp' if self.whiteToMove else 'bp'
             # Trả lại trạng thái nhập thành
             self.castleRightsLog.pop() 
             newRights = self.castleRightsLog[-1]
@@ -337,13 +340,6 @@ class GameState():
                     self.currentCastlingRight.bqs = False
                 elif move.startCol == 7:
                     self.currentCastlingRight.bks = False
-        
-    def getPawnPromotion(self, r, c, moves):
-        if self.board[r][c][1] == 'p':
-            if self.board[r][c][0] == 'w' and r == 0:
-                moves.append(Move((r,c), (r, c), self.board, promotion = 'wQ'))
-            if self.board[r][c][0] == 'b' and r == 7:
-                moves.append(Move((r,c), (r, c), self.board, promotion = 'bQ'))
 
     # Nước đi của tốt
     def getPawnMoves(self, r, c, moves):
@@ -367,7 +363,7 @@ class GameState():
             enemyColor = 'w'
             kingRow, kingCol = self.blackKingLocation
 
-        if 0 <= r + 2 * moveAmount < 8 and self.board[r + moveAmount][c] == '--':
+        if 0 <= r + moveAmount < 8 and self.board[r + moveAmount][c] == '--':
             if not piecePinned or pinDirection == (moveAmount, 0): #nếu không bị chặn
                 moves.append(Move((r, c), (r + moveAmount, c), self.board)) #Tiến 1 bước
                 if r == startRow and self.board[r + 2 * moveAmount][c] == '--': #Tiến 2 bước
@@ -511,7 +507,6 @@ class GameState():
     def getQueenMoves(self, r, c, moves):
         self.getRookMoves(r, c, moves)
         self.getBishopMoves(r, c, moves)
-        self.getPawnPromotion(r, c, moves)
     
     # Nước đi của vua
     def getKingMoves(self, r, c, moves):
@@ -569,7 +564,7 @@ class Move():
                   "e":4,"f":5,"g":6,"h":7}
     colsToFiles = {v: k for k, v in filesToCols.items()}
     
-    def __init__(self, startSq, endSq, board, enPassant = False, castle = False, promotion = None):
+    def __init__(self, startSq, endSq, board, enPassant = False, castle = False):
         self.startRow = startSq[0]
         self.startCol = startSq[1]
         self.endRow = endSq[0]
@@ -579,12 +574,8 @@ class Move():
         self.pawnPromotion = self.pieceMoved == 'p' and (self.endRow == 0 or self.endRow == 7) 
         self.enPassant = enPassant
         self.castle = castle
-        self.promotion = promotion
         if enPassant:
             self.pieceCaptured == 'bp' if self.pieceMoved == 'wp' else 'wp' 
-        if self.promotion:
-            self.pieceCaptured = self.board[self.endRow][self.endCol]
-            self.pieceMoved = self.promotion
         self.moveID = self.startRow * 1000 + self.startCol * 100 + self.endRow * 10 + self.endCol
     
     def create_none():
