@@ -27,6 +27,8 @@
 # 4. (xong)
 # khi tốt qua đường chiếu tướng tốt đồng minh không thể bắt nó
 
+# 5.
+# Chiếu tường không được nhập thành
 class GameState():
     def __init__(self):
         self.board = [

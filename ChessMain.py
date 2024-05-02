@@ -1,5 +1,8 @@
 # Chưa làm
+# 1. (xong)
 # đánh dấu nước đã đi
+# 2. 
+# màu chiếu tướng
 
 # Lỗi
 # 1.(xong)
@@ -132,6 +135,7 @@ def drawGameState(screen, gs, validMoves, sqSelected):
     drawBoard(screen)
     highlightSquares(screen, gs, validMoves, sqSelected)
     # Vẽ các quân cờ lên trên các hình vuông
+    drawMovedPieces(screen, gs.moveLog)
     drawPieces(screen, gs.board)
 
 # Đánh dấu ô vuông mà quân cờ được chọn để di chuyển
@@ -167,6 +171,15 @@ def drawPieces(screen, board):
             piece = board[r][c]
             if piece != "--":
                 screen.blit(IMAGES[piece], p.Rect(c * SQ_SIZE,r * SQ_SIZE, SQ_SIZE, SQ_SIZE))
+                
+def drawMovedPieces(screen, moveLog):
+    if len(moveLog) != 0:  # Kiểm tra nếu có quân cờ đã di chuyển
+        # Vẽ màu xanh nước biển cho ô bắt đầu
+        startSquare = p.Rect(moveLog[-1].startCol * SQ_SIZE, moveLog[-1].startRow * SQ_SIZE, SQ_SIZE, SQ_SIZE)
+        p.draw.rect(screen, p.Color('#BFEFFF'), startSquare)
+        # Vẽ màu vàng cho ô kết thúc
+        endSquare = p.Rect(moveLog[-1].endCol * SQ_SIZE, moveLog[-1].endRow * SQ_SIZE, SQ_SIZE, SQ_SIZE)
+        p.draw.rect(screen, p.Color('#EEEE00'), endSquare)
 
 # Hoạt ảnh di chuyển
 def animateMove(move, screen, gs, clock):
