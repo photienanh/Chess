@@ -4,7 +4,7 @@ from ChessEngine import Move
 pieceScore = {"K": 0, "Q": 10, "R": 5, "B": 3, "N": 3, "p": 1}
 CHECKMATE = 1000000
 STALEMATE = 0 # >0 => white win : <0 black win
-DEPTH = 3
+DEPTH = 4
 global nextMove
 
 
