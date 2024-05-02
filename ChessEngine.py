@@ -553,11 +553,9 @@ class Move():
         self.endCol = endSq[1]
         self.pieceMoved = board[self.startRow][self.startCol]
         self.pieceCaptured = board[self.endRow][self.endCol]
-        self.pawnPromotion = self.pieceMoved == 'p' and (self.endRow == 0 or self.endRow == 7) 
+        self.pawnPromotion = self.pieceMoved[1] == 'p' and (self.endRow == 0 or self.endRow == 7) 
         self.enPassant = enPassant
         self.castle = castle
-        if enPassant:
-            self.pieceCaptured == 'bp' if self.pieceMoved == 'wp' else 'wp' 
         self.moveID = self.startRow * 1000 + self.startCol * 100 + self.endRow * 10 + self.endCol
     
     def create_none():
