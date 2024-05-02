@@ -11,7 +11,7 @@ SQ_SIZE = HEIGHT // DIMENSION # Kích thước mỗi ô trên bàn cờ
 MAX_FPS = 15 # Số lần lặp trên 1 giây để cập nhật trạng thái trò chơi
 IMAGES = {}
 
-playerOne = False # True = playerTurn = whiteTurn
+playerOne = True # True = playerTurn = whiteTurn
 playerTwo = False
 
 # Khởi tạo từ điển của các ảnh
@@ -96,10 +96,7 @@ def main():
                     gameOver = False
 
         if not gameOver and not humanTurn:
-            if gs.whiteToMove:
-                AIMove = SmartMoveFinder.findBestMove(gs, validMoves)
-            else:
-                AIMove = SmartMoveFinder.findBestMinimaxMove(gs, validMoves)
+            AIMove = SmartMoveFinder.findBestMinimaxMove(gs, validMoves)
             if AIMove is None:  
                 AIMove = SmartMoveFinder.findRandomMove(validMoves)
             gs.makeMove(AIMove)
