@@ -1,3 +1,6 @@
+# Chưa làm
+# đánh dấu nước đã đi
+
 # Lỗi
 # 1.(xong)
 # undoMove tốt đi 2 nước k hiển thị lại hình ảnh
@@ -11,8 +14,8 @@ SQ_SIZE = HEIGHT // DIMENSION # Kích thước mỗi ô trên bàn cờ
 MAX_FPS = 15 # Số lần lặp trên 1 giây để cập nhật trạng thái trò chơi
 IMAGES = {}
 
-playerOne = False # True = playerTurn = whiteTurn
-playerTwo = False
+playerOne = True # True = playerTurn = whiteTurn
+playerTwo = True
 
 # Khởi tạo từ điển của các ảnh
 def loadImages():
@@ -37,7 +40,6 @@ def main():
     # Lưu lại các lần nhấp chuột
     playerClicks = []
     gameOver = False
-    
 
     while running:
         humanTurn = (gs.whiteToMove and playerOne) or (not gs.whiteToMove and playerTwo)
@@ -108,7 +110,7 @@ def main():
 
         if moveMade:
             if animate:
-                animateMove(gs.moveLog[-1], screen, gs.board, clock)
+                animateMove(gs.moveLog[-1], screen, gs, clock)
             validMoves= gs.getValidMoves()
             moveMade = False
             animate = False
@@ -120,10 +122,10 @@ def main():
             if gs.whiteToMove:
                 drawText(screen, 'Black win.', '#363636')
             else:
-                drawText(screen, 'White win.', '#A9A9A9')
+                drawText(screen, 'White win.', '#EEEEEE')
         elif gs.staleMate:
             gameOver = True
-            drawText(screen, 'Stalemate.', '#A9A9A9')
+            drawText(screen, 'Draw.', '#A9A9A9')
         clock.tick(MAX_FPS)
         p.display.flip()
 
@@ -170,7 +172,7 @@ def drawPieces(screen, board):
                 screen.blit(IMAGES[piece], p.Rect(c * SQ_SIZE,r * SQ_SIZE, SQ_SIZE, SQ_SIZE))
 
 # Hoạt ảnh di chuyển
-def animateMove(move, screen, board, clock):
+def animateMove(move, screen, gs, clock):
     global colors
     dR = move.endRow - move.startRow
     dC = move.endCol - move.startCol
@@ -178,7 +180,7 @@ def animateMove(move, screen, board, clock):
     for frame in range(frameCount + 1):
         r, c = (move.startRow + dR * frame / frameCount, move.startCol + dC * frame / frameCount)
         drawBoard(screen)
-        drawPieces(screen, board)
+        drawPieces(screen, gs.board)
         #
         color = colors[(move.endRow + move.endCol) % 2]
         endSquare = p.Rect(move.endCol * SQ_SIZE, move.endRow * SQ_SIZE, SQ_SIZE, SQ_SIZE)
