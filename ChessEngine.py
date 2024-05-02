@@ -27,8 +27,6 @@
 # 4. (xong)
 # khi tốt qua đường chiếu tướng tốt đồng minh không thể bắt nó
 
-# 5.
-# Chiếu tường không được nhập thành
 class GameState():
     def __init__(self):
         self.board = [
@@ -126,10 +124,7 @@ class GameState():
             if len(self.enPassantPossibleLog) != 0:
                 self.enPassantPossibleLog.pop() 
                 self.enPassantPossible = self.enPassantPossibleLog[-1]
-
-            if move.pawnPromotion:
-                self.board[move.endRow][move.endCol] = move.pieceCaptured
-                self.board[move.startRow][move.startCol] = 'wp' if self.whiteToMove else 'bp'
+                
             # Trả lại trạng thái nhập thành
             self.castleRightsLog.pop() 
             newRights = self.castleRightsLog[-1]
