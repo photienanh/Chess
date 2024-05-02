@@ -1,5 +1,6 @@
 import random
 from ChessEngine import Move
+import Evalute
 
 pieceScore = {"K": 0, "Q": 10, "R": 5, "B": 3, "N": 3, "p": 1}
 CHECKMATE = 1000000
@@ -53,7 +54,7 @@ def findBestMinimaxMove(gs, validMoves):
 def findMoveNegamax(gs, validMoves, depth, alpha, beta, turnMutiplayer):
     global nextMove
     if depth == 0:
-        return scoreBoard(gs)
+        return Evalute.evaluate_board(gs)
     if turnMutiplayer:
         maxScore = -CHECKMATE
         for move in validMoves:
