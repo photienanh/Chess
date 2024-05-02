@@ -83,8 +83,10 @@ class GameState():
         
         # Tốt phong hàm
         if move.pawnPromotion:
-            promotedPiece = 'Q'
-            self.board[move.endRow][move.endCol] = move.pieceMoved[0] + promotedPiece
+            promotedPiece = ['Q','R','N','B']
+            choice = input("Pick your choice:")
+            if choice in promotedPiece:
+                self.board[move.endRow][move.endCol] = move.pieceMoved[0] + choice
         
         # Xử lý nhập thành
         if move.castle:
@@ -124,7 +126,7 @@ class GameState():
             if len(self.enPassantPossibleLog) != 0:
                 self.enPassantPossibleLog.pop() 
                 self.enPassantPossible = self.enPassantPossibleLog[-1]
-                
+
             # Trả lại trạng thái nhập thành
             self.castleRightsLog.pop() 
             newRights = self.castleRightsLog[-1]
@@ -568,7 +570,7 @@ class Move():
         self.endCol = endSq[1]
         self.pieceMoved = board[self.startRow][self.startCol]
         self.pieceCaptured = board[self.endRow][self.endCol]
-        self.pawnPromotion = self.pieceMoved == 'p' and (self.endRow == 0 or self.endRow == 7) 
+        self.pawnPromotion = self.pieceMoved[1] == 'p' and (self.endRow == 0 or self.endRow == 7) 
         self.enPassant = enPassant
         self.castle = castle
         if enPassant:
