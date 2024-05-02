@@ -1,10 +1,14 @@
+# Lỗi
+# 1.(xong)
+# undoMove tốt đi 2 nước k hiển thị lại hình ảnh
+
 import pygame as p
 import ChessEngine, SmartMoveFinder
 
 WIDTH = HEIGHT = 512 # Kích thước cửa sổ
-DIMENSION = 8 # Kích thước bảng cờ vua 8x8
-SQ_SIZE = HEIGHT // DIMENSION
-MAX_FPS = 15
+DIMENSION = 8 # Kích thước bảng cờ vua 8x8 ô
+SQ_SIZE = HEIGHT // DIMENSION # Kích thước mỗi ô trên bàn cờ
+MAX_FPS = 15 # Số lần lặp trên 1 giây để cập nhật trạng thái trò chơi
 IMAGES = {}
 
 playerOne = False # True = playerTurn = whiteTurn
@@ -18,15 +22,13 @@ def loadImages():
 
 # Xử lý dữ liệu đầu vào của người dùng và cập nhật đồ họa
 def main():
-    p.init()
-    screen = p.display.set_mode((WIDTH, HEIGHT))
+    p.init() # Tạo môi trường để sd chức năng của Pygame
+    screen = p.display.set_mode((WIDTH, HEIGHT)) # Hiển thị cửa số có kích thước WxH
     clock = p.time.Clock()
-    screen.fill(p.Color("white"))
+    screen.fill(p.Color("white")) # Vẽ cửa sổ màu trắng
     gs = ChessEngine.GameState()
     validMoves = gs.getValidMoves()
-    #
     moveMade = False
-    #
     animate = False
     loadImages()
     running = True
@@ -49,19 +51,19 @@ def main():
                     location = p.mouse.get_pos() 
                     col = location[0] // SQ_SIZE
                     row = location[1] // SQ_SIZE
-                    if sqSelected == (row, col) or col >= 8:
+                    # Nếu chọn cùng 1 ô
+                    if sqSelected == (row, col):
                         # Bỏ chọn
                         sqSelected = ()
                         # Xóa danh sách
                         playerClicks = []
                     else:
                         sqSelected = (row, col)
-                        # Thêm 2 lần nhấp chuột đầu tiên
                         playerClicks.append(sqSelected)
-                    # Nhiều hơn 2 lần nhấp chuột
+                    
                     if len(playerClicks) == 2:
+                        # Tạo đối tượng move có lớp Move(điểm đầu, điểm cuối, bàn cờ)
                         move = ChessEngine.Move(playerClicks[0], playerClicks[1], gs.board)
-                        print(move.getChessLocation())
                         for i in range(len(validMoves)):
                             if move == validMoves[i]:
                                 gs.makeMove(validMoves[i])
@@ -69,6 +71,7 @@ def main():
                                 animate = True
                                 sqSelected = ()
                                 playerClicks = []
+                        
                         if not moveMade:
                             playerClicks = [sqSelected]
             # Xử lý phím
@@ -93,7 +96,10 @@ def main():
                     gameOver = False
 
         if not gameOver and not humanTurn:
-            AIMove = SmartMoveFinder.findBestMove(gs, validMoves)
+            if gs.whiteToMove:
+                AIMove = SmartMoveFinder.findBestMove(gs, validMoves)
+            else:
+                AIMove = SmartMoveFinder.findBestMinimaxMove(gs, validMoves)
             if AIMove is None:  
                 AIMove = SmartMoveFinder.findRandomMove(validMoves)
             gs.makeMove(AIMove)
@@ -112,13 +118,12 @@ def main():
         if gs.checkMate:
             gameOver = True
             if gs.whiteToMove:
-                drawText(screen, 'Black win.')
+                drawText(screen, 'Black win.', '#363636')
             else:
-                drawText(screen, 'White win.')
+                drawText(screen, 'White win.', '#A9A9A9')
         elif gs.staleMate:
             gameOver = True
-            drawText(screen, 'Stalemate.')
-
+            drawText(screen, 'Stalemate.', '#A9A9A9')
         clock.tick(MAX_FPS)
         p.display.flip()
 
@@ -156,7 +161,7 @@ def drawBoard(screen):
             color = colors[((r + c) % 2)]
             p.draw.rect(screen, color, p.Rect(c * SQ_SIZE, r * SQ_SIZE, SQ_SIZE, SQ_SIZE))
 
-# Vẽ quân cờ lên bảng sử dụng GameState.board
+# Vẽ quân cờ lên bảng
 def drawPieces(screen, board):
     for r in range(DIMENSION):
         for c in range(DIMENSION):
@@ -164,12 +169,12 @@ def drawPieces(screen, board):
             if piece != "--":
                 screen.blit(IMAGES[piece], p.Rect(c * SQ_SIZE,r * SQ_SIZE, SQ_SIZE, SQ_SIZE))
 
-# Hành động di chuyển
+# Hoạt ảnh di chuyển
 def animateMove(move, screen, board, clock):
     global colors
     dR = move.endRow - move.startRow
     dC = move.endCol - move.startCol
-    frameCount = (abs(dR) + abs(dC)) * 2
+    frameCount = (abs(dR) + abs(dC)) * 3
     for frame in range(frameCount + 1):
         r, c = (move.startRow + dR * frame / frameCount, move.startCol + dC * frame / frameCount)
         drawBoard(screen)
@@ -180,23 +185,19 @@ def animateMove(move, screen, board, clock):
         p.draw.rect(screen, color, endSquare)
 
         if move.pieceCaptured != '--':
-            if move.enPassant:
-                enPassantRow = move.endRow + 1 if move.pieceCaptured[0] == 'b' else move.endRow - 1
-                endSquare = p.Rect(move.endCol * SQ_SIZE, enPassantRow * SQ_SIZE, SQ_SIZE, SQ_SIZE)
             screen.blit(IMAGES[move.pieceCaptured], endSquare)
 
         #
         if move.pieceMoved != '--':
-            screen.blit(IMAGES[move.pieceMoved], endSquare)
+            screen.blit(IMAGES[move.pieceMoved], p.Rect(c * SQ_SIZE, r * SQ_SIZE, SQ_SIZE, SQ_SIZE))
         #
-        screen.blit(IMAGES[move.pieceMoved], p.Rect(c * SQ_SIZE, r * SQ_SIZE, SQ_SIZE, SQ_SIZE))
         p.display.flip()
         #
         clock.tick(150)
 
-def drawText(screen, text):
-    font = p.font.SysFont("Helvitca", 32, True, False)
-    textObject = font.render(text, 0, p.Color('Black'))
+def drawText(screen, text, color):
+    font = p.font.SysFont("Calibri", 32, True, False)
+    textObject = font.render(text, 0, p.Color(color))
     textLocation = p.Rect(0, 0, WIDTH, HEIGHT).move(WIDTH / 2 - textObject.get_width() / 2, HEIGHT / 2 - textObject.get_height() / 2)
     screen.blit(textObject, textLocation.move(2, 2))
 

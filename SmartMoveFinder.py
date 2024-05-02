@@ -2,9 +2,9 @@ import random
 from ChessEngine import Move
 
 pieceScore = {"K": 0, "Q": 10, "R": 5, "B": 3, "N": 3, "p": 1}
-CHECKMATE = 1000
+CHECKMATE = 1000000
 STALEMATE = 0 # >0 => white win : <0 black win
-DEPTH = 4
+DEPTH = 3
 global nextMove
 
 
@@ -44,34 +44,47 @@ def findBestMove(gs, validMoves):
     return bestAIMove
 
 def findBestMinimaxMove(gs, validMoves):
-    global nextMove, counter
+    global nextMove
     nextMove = None
-    counter = 0
     random.shuffle(validMoves)
-    findMoveNegamax(gs, validMoves, DEPTH, -CHECKMATE, CHECKMATE, 1 if gs.whiteToMove else -1)      
+    findMoveNegamax(gs, validMoves, DEPTH, -CHECKMATE, CHECKMATE, True if gs.whiteToMove else False)      
     return nextMove
 
 def findMoveNegamax(gs, validMoves, depth, alpha, beta, turnMutiplayer):
-    global nextMove, counter
-    counter += 1
+    global nextMove
     if depth == 0:
-        return scoreMaterial(gs.board) * scoreBoard(gs)
-    
-    maxScore = -CHECKMATE
-    for move in validMoves:
-        gs.makeMove(move)
-        nextValidMoves = gs.getValidMoves()
-        score = -findMoveNegamax(gs, nextValidMoves, depth-1,-alpha, -beta, -turnMutiplayer)
-        if score > maxScore:
-            maxScore = score
-            if depth == DEPTH:
-                nextMove = move
-        gs.undoMove()
-        if maxScore > alpha:
-            alpha = maxScore
-        if alpha >= beta:
-            break
-    return maxScore
+        return scoreBoard(gs)
+    if turnMutiplayer:
+        maxScore = -CHECKMATE
+        for move in validMoves:
+            gs.makeMove(move)
+            nextValidMoves = gs.getValidMoves()
+            score = findMoveNegamax(gs, nextValidMoves, depth-1, alpha, beta, False)
+            if score > maxScore:
+                maxScore = score
+                if depth == DEPTH:
+                    nextMove = move
+            alpha = max(alpha, score)
+            gs.undoMove()
+            if beta <= alpha:
+                break
+        return maxScore
+    else:
+        minScore = CHECKMATE
+        for move in validMoves:
+            gs.makeMove(move)
+            nextValidMoves = gs.getValidMoves()
+            score = findMoveNegamax(gs, nextValidMoves, depth-1, alpha, beta, True)
+            if score < minScore:
+                minScore = score
+                if depth == DEPTH:
+                    nextMove = move
+            gs.undoMove()
+            beta = min(beta, score)
+            if beta <= alpha:
+                break
+            
+        return minScore
 
 #white điểm càng cao càng tốt, black điểm càng thấp càng tốt
 def scoreBoard(gs):
