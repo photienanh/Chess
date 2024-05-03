@@ -124,7 +124,7 @@ def evaluate_board(gs) -> float:
             piece = gs.board[row][square]
             if piece  == "--":
                 continue
-            value = piece_value[piece[1]] + evaluate_piece(piece[1], piece[0], [row, square])
+            value = piece_value[piece[1]] + evaluate_piece(piece[1], piece[0], [row, square], end_game)
             total += value if piece[0] == "w" else -value
     return total
 
