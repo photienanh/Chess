@@ -548,11 +548,13 @@ class Move():
                   "e":4,"f":5,"g":6,"h":7}
     colsToFiles = {v: k for k, v in filesToCols.items()}
     
-    def __init__(self, startSq, endSq, board, enPassant = False, castle = False):
+    def __init__(self, startSq, endSq, choosePromotion, board, enPassant = False, castle = False):
         self.startRow = startSq[0]
         self.startCol = startSq[1]
         self.endRow = endSq[0]
         self.endCol = endSq[1]
+        self.choosePromotionRow = [0]
+        self.choosePromotionCol = [1]
         self.pieceMoved = board[self.startRow][self.startCol]
         self.pieceCaptured = board[self.endRow][self.endCol]
         self.pawnPromotion = self.pieceMoved[1] == 'p' and (self.endRow == 0 or self.endRow == 7) 
