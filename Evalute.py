@@ -1,8 +1,8 @@
-CHECKMATE = 10000000
+CHECKMATE = 99999999999999
 STALEMATE = 0
 
 piece_value = {
-    "K": 0, "Q": 900, "R": 500, "B": 330, "N": 320, "p": 100
+    "K": 0, "Q": 9000, "R": 5000, "B": 3300, "N": 3200, "p": 1000
 }
 
 pawnEvalWhite = [
@@ -87,7 +87,7 @@ kingEvalEndGameWhite = [
 ]
 kingEvalEndGameBlack = list(reversed(kingEvalEndGameWhite))
 
-def evaluate_piece(piece, square, location) -> int:
+def evaluate_piece(piece, square, location, end_game) -> int:
     piece_type = piece
     mapping = []
     if piece_type == "p":
@@ -101,19 +101,16 @@ def evaluate_piece(piece, square, location) -> int:
     elif piece_type == "Q":
         mapping = queenEval
     elif piece_type == "K":
-        #if end_game:
-        #    mapping = (
-        #        kingEvalEndGameWhite
-        #        if square == "w"
-        #        else kingEvalEndGameBlack
-        #    )
-        #else:
-        mapping = kingEvalWhite if square == "w" else kingEvalBlack
+        if end_game:
+            mapping = kingEvalEndGameWhite if square == "w" else kingEvalEndGameBlack
+        else:
+            mapping = kingEvalWhite if square == "w" else kingEvalBlack
     if 0 <= location[0] < 8 and 0 <= location[1] < 8:
         return mapping[location[0]][location[1]]
 
 def evaluate_board(gs) -> float:
     total = 0
+    end_game = check_end_game(gs.board)
     if gs.checkMate:
         if gs.whiteToMove:
             return -CHECKMATE # black win
@@ -127,6 +124,21 @@ def evaluate_board(gs) -> float:
             piece = gs.board[row][square]
             if piece  == "--":
                 continue
-            value = piece_value[piece[1]] + evaluate_piece(piece[1], piece[0], [row, square])
+            value = piece_value[piece[1]] + evaluate_piece(piece[1], piece[0], [row, square], end_game)
             total += value if piece[0] == "w" else -value
     return total
+
+def check_end_game(board) -> bool:
+    queens = 0
+    minors = 0
+    for row in board:
+        for square in row:
+            if square[1] == "Q":
+                queens += 1
+            if square[1] == "B" or square[1] == "N":
+                minors += 1
+
+    if queens == 0 or (queens == 2 and minors <= 1):
+        return True
+
+    return False

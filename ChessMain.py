@@ -16,7 +16,7 @@ MAX_FPS = 15 # Số lần lặp trên 1 giây để cập nhật trạng thái t
 IMAGES = {}
 
 playerOne = True # True = playerTurn = whiteTurn
-playerTwo = True
+playerTwo = False
 
 # Khởi tạo từ điển của các ảnh
 def loadImages():
@@ -70,10 +70,9 @@ def main():
                         move = ChessEngine.Move(playerClicks[0], playerClicks[1], gs.board)
                         for i in range(len(validMoves)):
                             if move == validMoves[i]:
-                                gs.makeMove(validMoves[i])
-                                moveMade = True
-                                animate = True
-                                if validMoves[i].pawnPromotion:
+                                if not validMoves[i].pawnPromotion:
+                                    gs.makeMove(validMoves[i])
+                                else:
                                     choosePP = True
                                     while choosePP:
                                         drawPromotionOptions(screen, validMoves[i])
@@ -87,15 +86,13 @@ def main():
                                                 pP = ['Q','R','B','N','Q','R','B','N']
                                                 if validMoves[i].pieceMoved == 'wp' and \
                                                  0 <= r < 4 and c == validMoves[i].endCol:
-                                                    gs.promoted.append((r, c))
-                                                    gs.makeMove(validMoves[i], promotedPiece='w' + pP[r])
+                                                    gs.makeMove(validMoves[i], promotedPiece = 'w' + pP[r])
                                                 elif validMoves[i].pieceMoved == 'bp' and \
                                                  4 <= r < 8 and c == validMoves[i].endCol:
-                                                    gs.promoted.append((r, c))
-                                                    gs.makeMove(validMoves[i], promotedPiece='b' + pP[r])
-                                        if len(gs.promoted) != 0:
-                                            gs.promoted.pop()
-                                            choosePP = False
+                                                    gs.makeMove(validMoves[i], promotedPiece= 'b' + pP[r])
+                                                choosePP = False
+                                moveMade = True
+                                animate = True
                                 sqSelected = ()
                                 playerClicks = []
                         if not moveMade:
@@ -203,11 +200,13 @@ def drawMovedPieces(screen, moveLog):
         p.draw.rect(screen, p.Color('#EEC900'), endSquare)
 
 def drawPromotionOptions(screen, location):
-    location.e = location.endRow
-    if location.e == 7:
-        location.e = location.e - 3
+    locationOptionRow = location.endRow
+    locationOptionCol = location.endCol
+    
+    if locationOptionRow == 7:
+        locationOptionRow = locationOptionRow - 3
     # Tạo bề mặt có vị trí, kích thước
-    optionPP = p.Rect(location.endCol * SQ_SIZE, location.e * SQ_SIZE, SQ_SIZE, 4 * SQ_SIZE)
+    optionPP = p.Rect(locationOptionCol * SQ_SIZE, locationOptionRow * SQ_SIZE, SQ_SIZE, 4 * SQ_SIZE)
     # Đặt kích thước cho viền đen
     border_width = 1
     p.draw.rect(screen, p.Color('white'), optionPP)
@@ -215,7 +214,7 @@ def drawPromotionOptions(screen, location):
         
     promotionOptions = ['Q', 'R', 'B', 'N']
     for i, piece in enumerate(promotionOptions):
-        screen.blit(IMAGES[location.pieceMoved[0] + piece], p.Rect(location.endCol * SQ_SIZE, location.e * SQ_SIZE  + (i * SQ_SIZE), SQ_SIZE, SQ_SIZE))
+        screen.blit(IMAGES[location.pieceMoved[0] + piece], p.Rect(locationOptionCol * SQ_SIZE, locationOptionRow * SQ_SIZE  + (i * SQ_SIZE), SQ_SIZE, SQ_SIZE))
 
 # Hoạt ảnh di chuyển
 def animateMove(move, screen, gs, clock):
