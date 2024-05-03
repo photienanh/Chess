@@ -1,8 +1,6 @@
 # Chưa làm
 # 1. (xong)
 # đánh dấu nước đã đi
-# 2. 
-# màu chiếu tướng
 
 # Lỗi
 # 1.(xong)
@@ -43,6 +41,7 @@ def main():
     # Lưu lại các lần nhấp chuột
     playerClicks = []
     gameOver = False
+    choosePP = False
 
     while running:
         humanTurn = (gs.whiteToMove and playerOne) or (not gs.whiteToMove and playerTwo)
@@ -74,9 +73,28 @@ def main():
                                 gs.makeMove(validMoves[i])
                                 moveMade = True
                                 animate = True
+                                if validMoves[i].pawnPromotion:
+                                    choosePP = True
+                                    while choosePP:
+                                        drawPromotionOptions(screen, validMoves[i])
+                                        p.display.flip()  # Cập nhật cửa sổ để hiển thị cửa sổ nhỏ mới
+                                        for e in p.event.get():
+                                            if e.type == p.MOUSEBUTTONDOWN:
+                                                # Xác định quân cờ được chọn
+                                                location = p.mouse.get_pos()
+                                                c = location[0] // SQ_SIZE
+                                                r = location[1] // SQ_SIZE
+                                                if validMoves[i].pieceMoved == 'wp' and \
+                                                 0 <= r < 4 and c == validMoves[i].endCol:
+                                                    gs.promoted.append((r, c))
+                                                elif validMoves[i].pieceMoved == 'bp' and \
+                                                 4 <= r < 8 and c == validMoves[i].endCol:
+                                                    gs.promoted.append((r, c))
+                                        if len(gs.promoted) != 0:
+                                            gs.promoted.pop()
+                                            choosePP = False
                                 sqSelected = ()
                                 playerClicks = []
-                        
                         if not moveMade:
                             playerClicks = [sqSelected]
             # Xử lý phím
@@ -176,10 +194,25 @@ def drawMovedPieces(screen, moveLog):
     if len(moveLog) != 0:  # Kiểm tra nếu có quân cờ đã di chuyển
         # Vẽ màu xanh nước biển cho ô bắt đầu
         startSquare = p.Rect(moveLog[-1].startCol * SQ_SIZE, moveLog[-1].startRow * SQ_SIZE, SQ_SIZE, SQ_SIZE)
-        p.draw.rect(screen, p.Color('#BFEFFF'), startSquare)
+        p.draw.rect(screen, p.Color('#CDCD00'), startSquare)
         # Vẽ màu vàng cho ô kết thúc
         endSquare = p.Rect(moveLog[-1].endCol * SQ_SIZE, moveLog[-1].endRow * SQ_SIZE, SQ_SIZE, SQ_SIZE)
-        p.draw.rect(screen, p.Color('#EEEE00'), endSquare)
+        p.draw.rect(screen, p.Color('#EEC900'), endSquare)
+
+def drawPromotionOptions(screen, location):
+    location.e = location.endRow
+    if location.e == 7:
+        location.e = location.e - 3
+    # Tạo bề mặt có vị trí, kích thước
+    optionPP = p.Rect(location.endCol * SQ_SIZE, location.e * SQ_SIZE, SQ_SIZE, 4 * SQ_SIZE)
+    # Đặt kích thước cho viền đen
+    border_width = 1
+    p.draw.rect(screen, p.Color('white'), optionPP)
+    p.draw.rect(screen, p.Color('black'), optionPP, border_width)
+        
+    promotionOptions = ['Q', 'R', 'B', 'N']
+    for i, piece in enumerate(promotionOptions):
+        screen.blit(IMAGES[location.pieceMoved[0] + piece], p.Rect(location.endCol * SQ_SIZE, location.e * SQ_SIZE  + (i * SQ_SIZE), SQ_SIZE, SQ_SIZE))
 
 # Hoạt ảnh di chuyển
 def animateMove(move, screen, gs, clock):

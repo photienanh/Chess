@@ -27,16 +27,19 @@
 # 4. (xong)
 # khi tốt qua đường chiếu tướng tốt đồng minh không thể bắt nó
 
+# 5.
+# tướng đang bị chiếu không được nhập thành
+ 
 class GameState():
     def __init__(self):
         self.board = [
             ["bR","bN","bB","bQ","bK","bB","bN","bR"],
-            ["bp","bp","bp","bp","bp","bp","bp","bp"],
+            ["bp","bp","bp","bp","bp","bp","wp","bp"],
             ["--","--","--","--","--","--","--","--"],
             ["--","--","--","--","--","--","--","--"],
             ["--","--","--","--","--","--","--","--"],
             ["--","--","--","--","--","--","--","--"],
-            ["wp","wp","wp","wp","wp","wp","wp","wp"],
+            ["wp","wp","wp","wp","wp","wp","bp","wp"],
             ["wR","wN","wB","wQ","wK","wB","wN","wR"]]
         self.moveFunctions = {"p": self.getPawnMoves, "R": self.getRookMoves, "N":self.getKnightMoves,
                             "B": self.getBishopMoves, "Q": self.getQueenMoves, "K": self.getKingMoves}
@@ -49,6 +52,7 @@ class GameState():
         self.checks = [] #Danh sách chiếu
         self.checkMate = False #Chiếu hết
         self.staleMate = False #Hòa cơ
+        self.promoted = []
         self.enPassantPossible = () #Bắt quân qua đường
         self.enPassantPossibleLog = [self.enPassantPossible]
         self.currentCastlingRight = CastleRights(True,True,True,True) #Nhập thành
@@ -83,10 +87,11 @@ class GameState():
         
         # Tốt phong hàm
         if move.pawnPromotion:
-            promotedPiece = ['Q','R','N','B']
-            choice = input("Pick your choice:")
-            if choice in promotedPiece:
-                self.board[move.endRow][move.endCol] = move.pieceMoved[0] + choice
+            # promotedPiece = ['Q','R','N','B']
+            # choice = input("Pick your choice:")
+            # if choice in promotedPiece:
+            #     self.board[move.endRow][move.endCol] = move.pieceMoved[0] + choice
+            pass
         
         # Xử lý nhập thành
         if move.castle:
@@ -563,22 +568,18 @@ class Move():
                   "e":4,"f":5,"g":6,"h":7}
     colsToFiles = {v: k for k, v in filesToCols.items()}
     
-    def __init__(self, startSq, endSq, choosePromotion, board, enPassant = False, castle = False):
+    def __init__(self, startSq, endSq, board, enPassant = False, castle = False, pawnPromotion = False):
         self.startRow = startSq[0]
         self.startCol = startSq[1]
         self.endRow = endSq[0]
         self.endCol = endSq[1]
-        self.choosePromotionRow = [0]
-        self.choosePromotionCol = [1]
         self.pieceMoved = board[self.startRow][self.startCol]
         self.pieceCaptured = board[self.endRow][self.endCol]
         self.pawnPromotion = self.pieceMoved[1] == 'p' and (self.endRow == 0 or self.endRow == 7) 
         self.enPassant = enPassant
         self.castle = castle
-        if enPassant:
-            self.pieceCaptured == 'bp' if self.pieceMoved == 'wp' else 'wp' 
         self.moveID = self.startRow * 1000 + self.startCol * 100 + self.endRow * 10 + self.endCol
-    
+
     def create_none():
         return None
 
