@@ -16,7 +16,7 @@ MAX_FPS = 15 # Số lần lặp trên 1 giây để cập nhật trạng thái t
 IMAGES = {}
 
 playerOne = True # True = playerTurn = whiteTurn
-playerTwo = True
+playerTwo = False
 
 # Khởi tạo từ điển của các ảnh
 def loadImages():
