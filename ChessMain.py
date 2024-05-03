@@ -15,8 +15,8 @@ SQ_SIZE = HEIGHT // DIMENSION # Kích thước mỗi ô trên bàn cờ
 MAX_FPS = 15 # Số lần lặp trên 1 giây để cập nhật trạng thái trò chơi
 IMAGES = {}
 
-playerOne = False # True = playerTurn = whiteTurn
-playerTwo = False
+playerOne = True # True = playerTurn = whiteTurn
+playerTwo = True
 
 # Khởi tạo từ điển của các ảnh
 def loadImages():
@@ -84,12 +84,15 @@ def main():
                                                 location = p.mouse.get_pos()
                                                 c = location[0] // SQ_SIZE
                                                 r = location[1] // SQ_SIZE
+                                                pP = ['Q','R','B','N','Q','R','B','N']
                                                 if validMoves[i].pieceMoved == 'wp' and \
                                                  0 <= r < 4 and c == validMoves[i].endCol:
                                                     gs.promoted.append((r, c))
+                                                    gs.makeMove(validMoves[i], promotedPiece='w' + pP[r])
                                                 elif validMoves[i].pieceMoved == 'bp' and \
                                                  4 <= r < 8 and c == validMoves[i].endCol:
                                                     gs.promoted.append((r, c))
+                                                    gs.makeMove(validMoves[i], promotedPiece='b' + pP[r])
                                         if len(gs.promoted) != 0:
                                             gs.promoted.pop()
                                             choosePP = False

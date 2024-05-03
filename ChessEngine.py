@@ -29,7 +29,7 @@
 
 # 5.
 # tướng đang bị chiếu không được nhập thành
- 
+import pygame as p
 class GameState():
     def __init__(self):
         self.board = [
@@ -63,7 +63,7 @@ class GameState():
     # Cập nhật bàn cờ với vị trí mới của quân cờ.
     # Thêm nước đi vào lịch sử nước đi.
     # Cập nhật các biến khác như lượt của người chơi, vị trí của vua, quyền nhập thành, v.v.
-    def makeMove(self, move):        
+    def makeMove(self, move, promotedPiece = None):        
         self.board[move.endRow][move.endCol] = move.pieceMoved
         self.board[move.startRow][move.startCol] = "--"
         self.moveLog.append(move)
@@ -87,11 +87,8 @@ class GameState():
         
         # Tốt phong hàm
         if move.pawnPromotion:
-            # promotedPiece = ['Q','R','N','B']
-            # choice = input("Pick your choice:")
-            # if choice in promotedPiece:
-            #     self.board[move.endRow][move.endCol] = move.pieceMoved[0] + choice
-            pass
+            self.board[move.endRow][move.endCol] = promotedPiece
+            # self.board[move.endRow][move.endCol] = move.pieceMoved[0] + 'Q'
         
         # Xử lý nhập thành
         if move.castle:
@@ -568,7 +565,7 @@ class Move():
                   "e":4,"f":5,"g":6,"h":7}
     colsToFiles = {v: k for k, v in filesToCols.items()}
     
-    def __init__(self, startSq, endSq, board, enPassant = False, castle = False, pawnPromotion = False):
+    def __init__(self, startSq, endSq, board, enPassant = False, castle = False):
         self.startRow = startSq[0]
         self.startCol = startSq[1]
         self.endRow = endSq[0]
