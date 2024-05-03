@@ -46,6 +46,9 @@ class GameState():
         self.moveLog = [] #Lịch sử nước đi
         self.whiteKingLocation = (7,4) #Vị trí vua trắng
         self.blackKingLocation = (0,4) #Vị trí vua đen
+        self.noCapturedMoves = 0
+        self.historyBoard = []
+        self.repeatedPosition = 0
         self.inCheck = False #Bị chiếu
         self.pins = [] #Danh sách ghim
         self.checks = [] #Danh sách chiếu
@@ -86,6 +89,7 @@ class GameState():
         
         # Tốt phong hàm
         if move.pawnPromotion:
+            self.whiteToMove = not self.whiteToMove
             self.board[move.endRow][move.endCol] = promotedPiece
             # self.board[move.endRow][move.endCol] = move.pieceMoved[0] + 'Q'
         
@@ -105,7 +109,25 @@ class GameState():
         self.updateCastleRights(move)
         self.castleRightsLog.append(CastleRights(self.currentCastlingRight.wks, self.currentCastlingRight.bks, 
                                              self.currentCastlingRight.wqs, self.currentCastlingRight.bqs))
+        if move.pieceCaptured == '--':
+            self.noCapturedMoves += 1
+        else:
+            self.noCapturedMoves = 0
+        # self.historyBoard.append[self.board[:]]
+        self.repeated_position = self.check_repeated_position()
         
+    def check_repeated_position(self):
+        # Kiểm tra xem vị trí cờ hiện tại đã xuất hiện bao nhiêu lần trong lịch sử nước đi
+        position_count = {}
+        for move in self.moveLog:
+            position = tuple(self.board[row][col] for row in range(8) for col in range(8))
+            if position in position_count:
+                position_count[position] += 1
+            else:
+                position_count[position] = 1
+        
+        # Nếu vị trí cờ hiện tại đã xuất hiện 3 lần, trả về 3
+        return max(position_count.values()) if position_count else 0
     # Hoàn tác nước đi trước đó.
     def undoMove(self):
         if len(self.moveLog) != 0:
@@ -195,8 +217,11 @@ class GameState():
             else:
                 self.staleMate = True
         else:
-            self.checkMate = False
-            self.staleMate = False
+            if not self.inCheck:
+                if self.noCapturedMoves >= 50:
+                    self.staleMate = True
+                elif self.repeatedPosition >= 3:
+                    self.staleMate = True
         return moves
 
     # Kiểm tra xem vua của người chơi hiện tại có đang bị chiếu không hay không.
