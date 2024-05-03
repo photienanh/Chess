@@ -33,12 +33,12 @@ class GameState():
     def __init__(self):
         self.board = [
             ["bR","bN","bB","bQ","bK","bB","bN","bR"],
-            ["bp","bp","bp","bp","bp","bp","bp","bp"],
+            ["bp","bp","bp","bp","bp","bp","wp","bp"],
             ["--","--","--","--","--","--","--","--"],
             ["--","--","--","--","--","--","--","--"],
             ["--","--","--","--","--","--","--","--"],
             ["--","--","--","--","--","--","--","--"],
-            ["wp","wp","wp","wp","wp","wp","wp","wp"],
+            ["wp","wp","wp","wp","wp","wp","bp","wp"],
             ["wR","wN","wB","wQ","wK","wB","wN","wR"]]
         self.moveFunctions = {"p": self.getPawnMoves, "R": self.getRookMoves, "N":self.getKnightMoves,
                             "B": self.getBishopMoves, "Q": self.getQueenMoves, "K": self.getKingMoves}
@@ -89,7 +89,6 @@ class GameState():
         
         # Tốt phong hàm
         if move.pawnPromotion:
-            self.whiteToMove = not self.whiteToMove
             self.board[move.endRow][move.endCol] = promotedPiece
             # self.board[move.endRow][move.endCol] = move.pieceMoved[0] + 'Q'
         
