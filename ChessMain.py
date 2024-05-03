@@ -87,14 +87,10 @@ def main():
                                                 if validMoves[i].pieceMoved == 'wp' and \
                                                  0 <= r < 4 and c == validMoves[i].endCol:
                                                     gs.makeMove(validMoves[i], promotedPiece = 'w' + pP[r])
-                                                    gs.promoted.append((r, c))
                                                 elif validMoves[i].pieceMoved == 'bp' and \
                                                  4 <= r < 8 and c == validMoves[i].endCol:
                                                     gs.makeMove(validMoves[i], promotedPiece= 'b' + pP[r])
-                                                    gs.promoted.append((r, c))
-                                        if len(gs.promoted) != 0:
-                                            gs.promoted.pop()
-                                            choosePP = False
+                                                choosePP = False
                                 moveMade = True
                                 animate = True
                                 sqSelected = ()
