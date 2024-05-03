@@ -29,7 +29,6 @@
 
 # 5.
 # tướng đang bị chiếu không được nhập thành
-import pygame as p
 class GameState():
     def __init__(self):
         self.board = [
