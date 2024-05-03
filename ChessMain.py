@@ -17,8 +17,8 @@ SQ_SIZE = HEIGHT // DIMENSION # Kích thước mỗi ô trên bàn cờ
 MAX_FPS = 15 # Số lần lặp trên 1 giây để cập nhật trạng thái trò chơi
 IMAGES = {}
 
-playerOne = True # True = playerTurn = whiteTurn
-playerTwo = True
+playerOne = False # True = playerTurn = whiteTurn
+playerTwo = False
 
 # Khởi tạo từ điển của các ảnh
 def loadImages():
