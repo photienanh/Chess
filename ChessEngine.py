@@ -46,9 +46,8 @@ class GameState():
         self.moveLog = [] #Lịch sử nước đi
         self.whiteKingLocation = (7,4) #Vị trí vua trắng
         self.blackKingLocation = (0,4) #Vị trí vua đen
-        self.noCapturedMoves = 0
+        self.noCapturedMoves = 0 #Lịch sử ăn quân và di tốt
         self.historyBoard = []
-        self.repeatedPosition = 0
         self.inCheck = False #Bị chiếu
         self.pins = [] #Danh sách ghim
         self.checks = [] #Danh sách chiếu
@@ -108,30 +107,21 @@ class GameState():
         self.updateCastleRights(move)
         self.castleRightsLog.append(CastleRights(self.currentCastlingRight.wks, self.currentCastlingRight.bks, 
                                              self.currentCastlingRight.wqs, self.currentCastlingRight.bqs))
+        
+        self.historyBoard.append(tuple(tuple(cell) for cell in row) for row in self.board)
+
+        # Nếu nước đi không ăn quân và không di tốt
         if move.pieceCaptured == '--' and move.pieceMoved[1] != 'p':
             self.noCapturedMoves += 1
         else:
             self.noCapturedMoves = 0
-        # self.historyBoard.append[self.board[:]]
-        self.repeated_position = self.check_repeated_position()
-        
-    def check_repeated_position(self):
-        # Kiểm tra xem vị trí cờ hiện tại đã xuất hiện bao nhiêu lần trong lịch sử nước đi
-        position_count = {}
-        for move in self.moveLog:
-            position = tuple(self.board[row][col] for row in range(8) for col in range(8))
-            if position in position_count:
-                position_count[position] += 1
-            else:
-                position_count[position] = 1
-        
-        # Nếu vị trí cờ hiện tại đã xuất hiện 3 lần, trả về 3
-        return max(position_count.values()) if position_count else 0
         
     # Hoàn tác nước đi trước đó.
     def undoMove(self):
         if len(self.moveLog) != 0:
             move = self.moveLog.pop() #Lấy nước đi cuối cùng
+            self.noCapturedMoves -= 1
+            self.historyBoard.pop()
             self.board[move.startRow][move.startCol] = move.pieceMoved #Trả quân về vị trí ban đầu
             self.board[move.endRow][move.endCol] = move.pieceCaptured #Trả lại quân bị ăn
             self.whiteToMove = not self.whiteToMove #Đảo chiều người chơi
@@ -217,13 +207,20 @@ class GameState():
             else:
                 self.staleMate = True
         else:
-             if not self.inCheck:
-                if self.noCapturedMoves >= 50:
+            if self.noCapturedMoves >= 50:
+                self.staleMate = True
+            # if (len(self.historyBoard) >= 6) and (self.equal(self.historyBoard[-1], self.historyBoard[-3], self.historyBoard[-5])):
+            if len(self.historyBoard) >= 6:
+                a1 = [tuple(tuple(cell) for cell in row) for row in self.historyBoard[-1]]
+                a2 = [tuple(tuple(cell) for cell in row) for row in self.historyBoard[-3]]
+                a3 = [tuple(tuple(cell) for cell in row) for row in self.historyBoard[-5]]
+                if a1 == a2 == a3:
                     self.staleMate = True
-                elif self.repeatedPosition >= 3:
-                    self.staleMate = True
+            else:
+                self.checkMate = False
+                self.staleMate = False
         return moves
-
+    
     # Kiểm tra xem vua của người chơi hiện tại có đang bị chiếu không hay không.
     def inCheck(self):
         if self.whiteToMove:
