@@ -310,6 +310,8 @@ class GameState():
                 endCol = startCol + d[1]*i
                 if 0 <= endRow < 8 and 0 <= endCol < 8:
                     endPiece = self.board[endRow][endCol]
+                    if endPiece is None:
+                        continue
                     if endPiece[0] == allyColor and endPiece[1] != 'K': #Nếu có quân đồng minh khác vua
                         if possiblePin == ():
                             possiblePin = (endRow, endCol, d[0], d[1])
