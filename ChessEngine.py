@@ -1,11 +1,11 @@
 # Luật hòa cờ
-# 1. không chiếu hết nhưng hết nước đi theo luật
-# 2. di chuyển 50 bước liên tiếp (cả 2 người) không có nước đi bắt quân hoặc k đi tốt
+# 1. không chiếu hết nhưng hết nước đi theo luật(xong)
+# 2. di chuyển 50 bước liên tiếp (cả 2 người) không có nước đi bắt quân hoặc k đi tốt(xong)
 # 3. cùng 1 thế cờ 3 lần 1 ng
 # 4. thiếu quân
 
 
-# Chưa làm
+# Chưa làm(xong)
 # tốt phong quân
 
 
