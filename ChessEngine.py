@@ -1,7 +1,7 @@
 # Luật hòa cờ
 # 1. không chiếu hết nhưng hết nước đi theo luật(xong)
 # 2. di chuyển 50 bước liên tiếp (cả 2 người) không có nước đi bắt quân hoặc k đi tốt(xong)
-# 3. cùng 1 thế cờ 3 lần liên tiếp(xong)
+# 3. cùng 1 thế cờ 3 lần liên tiếp
 # 4. thiếu quân(xong)
 
 
@@ -51,7 +51,7 @@ class GameState():
         self.blackKingLocation = (0,4) #Vị trí vua đen
         self.noCapturedMoves = 0 #Lịch sử ăn quân và di tốt
         self.historyBoard = []
-        self.countPiece = {'p':16, 'R':4, 'B':4, 'N':4, 'Q':2, 'K':2}
+        self.countPiece = {'p':16, 'R':4, 'B':4, 'N':4, 'Q':2}
         self.inCheck = False #Bị chiếu
         self.pins = [] #Danh sách ghim
         self.checks = [] #Danh sách chiếu
@@ -121,9 +121,7 @@ class GameState():
             self.noCapturedMoves += 1
         else:
             self.noCapturedMoves = 0
-        
-        # self.repeated_position = self.check_repeated_position()
-        
+                
     # Hoàn tác nước đi trước đó.
     def undoMove(self):
         if len(self.moveLog) != 0:
@@ -232,17 +230,11 @@ class GameState():
                 self.staleMate = self.missPiece()
         return moves
     def missPiece(self):
-        if self.countPiece == {'p':0, 'R':0, 'B':0, 'N':0, 'Q':0, 'K':2}:
+        if self.countPiece == {'p':0, 'R':0, 'B':0, 'N':0, 'Q':0}:
             return True
-        elif self.countPiece == {'p':0, 'R':0, 'B':1, 'N':0, 'Q':0, 'K':2}:
+        elif self.countPiece == {'p':0, 'R':0, 'B':1, 'N':0, 'Q':0}:
             return True
-        elif self.countPiece == {'p':0, 'R':0, 'B':0, 'N':1, 'Q':0, 'K':2}:
-            return True
-        elif self.countPiece == {'p':0, 'R':1, 'B':1, 'N':0, 'Q':0, 'K':2}:
-            return True
-        elif self.countPiece == {'p':0, 'R':1, 'B':0, 'N':1, 'Q':0, 'K':2}:
-            return True
-        elif self.countPiece == {'p':0, 'R':0, 'B':0, 'N':2, 'Q':0, 'K':2}:
+        elif self.countPiece == {'p':0, 'R':0, 'B':0, 'N':1, 'Q':0}:
             return True
         else:
             return False
