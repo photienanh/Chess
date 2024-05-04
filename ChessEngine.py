@@ -115,7 +115,6 @@ class GameState():
             self.noCapturedMoves += 1
         else:
             self.noCapturedMoves = 0
-        # self.historyBoard.append[self.board[:]]
         self.repeated_position = self.check_repeated_position()
         
     def check_repeated_position(self):
@@ -184,9 +183,6 @@ class GameState():
             kingCol = self.blackKingLocation[1]
 
         if self.inCheck: #Nếu bị chiếu
-            # Nếu bị chiếu thì không được nhập thành
-            self.currentCastlingRight = CastleRights(False, False, False, False)
-
             if len(self.checks) == 1: #Nếu chỉ có 1 quân chiếu(không phải quân mã)
                 moves = self.getAllPossibleMoves() #Xác định tất cả nước có thể đi
                 check = self.checks[0]
@@ -216,8 +212,6 @@ class GameState():
                 self.getKingMoves(kingRow, kingCol, moves)
         else:
             moves = self.getAllPossibleMoves()
-        newRights = self.castleRightsLog[-1]
-        self.currentCastlingRight = CastleRights(newRights.wks, newRights.bks, newRights.wqs, newRights.bqs)
         
         if len(moves) == 0:
             if self.inCheck:
@@ -582,6 +576,7 @@ class GameState():
     # Nhập thành phía vua
     def getKingsideCastleMoves(self, r, c, moves, allyColor):
         if c+3 < len(self.board[r]) and self.board[r][c + 1] == '--' and self.board[r][c + 2] == '--' and \
+         not self.squareUnderAttack(r, c, allyColor) and \
          not self.squareUnderAttack(r, c + 1, allyColor) and not self.squareUnderAttack(r, c + 2, allyColor) and \
          self.board[r][c + 3] == allyColor + 'R':
             moves.append(Move((r, c), (r, c + 2), self.board, castle = True))
@@ -589,6 +584,7 @@ class GameState():
     # Nhập thành phía hậu
     def getQueensideCastleMoves(self, r, c, moves, allyColor):
         if c-4 < len(self.board[r]) and self.board[r][c - 1] == '--' and self.board[r][c - 2] == '--' and self.board[r][c - 3] == '--' and \
+         not self.squareUnderAttack(r, c, allyColor) and \
          not self.squareUnderAttack(r, c - 1,allyColor) and not self.squareUnderAttack(r, c - 2, allyColor) and \
          self.board[r][c - 4] == allyColor + 'R':
             moves.append(Move((r, c), (r, c - 2), self.board, castle = True))
