@@ -1,8 +1,8 @@
 # Luật hòa cờ
 # 1. không chiếu hết nhưng hết nước đi theo luật(xong)
 # 2. di chuyển 50 bước liên tiếp (cả 2 người) không có nước đi bắt quân hoặc k đi tốt(xong)
-# 3. cùng 1 thế cờ 3 lần 1 ng
-# 4. thiếu quân
+# 3. cùng 1 thế cờ 3 lần liên tiếp(xong)
+# 4. thiếu quân(xong)
 
 
 # Chưa làm(xong)
@@ -121,10 +121,8 @@ class GameState():
             self.noCapturedMoves += 1
         else:
             self.noCapturedMoves = 0
-<<<<<<< HEAD
-        self.repeated_position = self.check_repeated_position()
-=======
->>>>>>> c0239d092ba75187e4bed6c4fd70101df4493444
+        
+        # self.repeated_position = self.check_repeated_position()
         
     # Hoàn tác nước đi trước đó.
     def undoMove(self):
