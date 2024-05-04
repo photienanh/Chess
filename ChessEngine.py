@@ -27,7 +27,7 @@
 # 4. (xong)
 # khi tốt qua đường chiếu tướng tốt đồng minh không thể bắt nó
 
-# 5.
+# 5. (xong)
 # tướng đang bị chiếu không được nhập thành
 
 # 6.
@@ -184,6 +184,9 @@ class GameState():
             kingCol = self.blackKingLocation[1]
 
         if self.inCheck: #Nếu bị chiếu
+            # Nếu bị chiếu thì không được nhập thành
+            self.currentCastlingRight = CastleRights(False, False, False, False)
+
             if len(self.checks) == 1: #Nếu chỉ có 1 quân chiếu(không phải quân mã)
                 moves = self.getAllPossibleMoves() #Xác định tất cả nước có thể đi
                 check = self.checks[0]
@@ -213,7 +216,9 @@ class GameState():
                 self.getKingMoves(kingRow, kingCol, moves)
         else:
             moves = self.getAllPossibleMoves()
-
+        newRights = self.castleRightsLog[-1]
+        self.currentCastlingRight = CastleRights(newRights.wks, newRights.bks, newRights.wqs, newRights.bqs)
+        
         if len(moves) == 0:
             if self.inCheck:
                 self.checkMate = True
@@ -245,6 +250,8 @@ class GameState():
                 endCol = c + d[1]*i
                 if 0 <= endRow < 8 and 0 <= endCol < 8: #Duyệt trong phạm vi bàn cờ
                     endPiece = self.board[endRow][endCol]
+                    if endPiece is None:
+                        continue
                     if endPiece[0] == allyColor: #Nếu là quân đồng minh
                         break
                     elif endPiece[0] == enemyColor: #Nếu là quân địch
