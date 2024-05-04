@@ -1,6 +1,10 @@
 # Chưa làm
 # 1. (xong)
 # đánh dấu nước đã đi
+# 2. 
+# thay đổi cách đánh dấu nước đi hợp lệ
+# 3.
+# đánh số và chữ cho ô
 
 # Lỗi
 # 1.(xong)
@@ -244,9 +248,11 @@ def animateMove(move, screen, gs, clock):
 
 def drawText(screen, text, color):
     font = p.font.SysFont("Calibri", 32, True, False)
-    textObject = font.render(text, 0, p.Color(color))
+    textObject = font.render(text, 0, p.Color('black'))
     textLocation = p.Rect(0, 0, WIDTH, HEIGHT).move(WIDTH / 2 - textObject.get_width() / 2, HEIGHT / 2 - textObject.get_height() / 2)
     screen.blit(textObject, textLocation.move(2, 2))
+    textObject = font.render(text, 0, p.Color(color))
+    screen.blit(textObject, textLocation.move(3, 3)) 
 
 if __name__ == "__main__":
     main()
