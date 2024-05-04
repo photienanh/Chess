@@ -50,7 +50,7 @@ class GameState():
         self.whiteKingLocation = (7,4) #Vị trí vua trắng
         self.blackKingLocation = (0,4) #Vị trí vua đen
         self.noCapturedMoves = 0 #Lịch sử ăn quân và di tốt
-        self.historyBoard = []
+        self.historyBoard = [([r[:] for r in self.board])]
         self.countPiece = {'p':16, 'R':4, 'B':4, 'N':4, 'Q':2}
         self.inCheck = False #Bị chiếu
         self.pins = [] #Danh sách ghim
@@ -62,15 +62,15 @@ class GameState():
         self.currentCastlingRight = CastleRights(True,True,True,True) #Nhập thành
         self.castleRightsLog = [CastleRights(self.currentCastlingRight.wks, self.currentCastlingRight.bks, 
                                              self.currentCastlingRight.wqs, self.currentCastlingRight.bqs)]
-        
     # Thực hiện một nước đi trên bàn cờ.
     # Cập nhật bàn cờ với vị trí mới của quân cờ.
     # Thêm nước đi vào lịch sử nước đi.
     # Cập nhật các biến khác như lượt của người chơi, vị trí của vua, quyền nhập thành, v.v.
-    def makeMove(self, move, promotedPiece = None):        
+    def makeMove(self, move, promotedPiece = None):
         self.board[move.endRow][move.endCol] = move.pieceMoved
         self.board[move.startRow][move.startCol] = "--"
         self.moveLog.append(move)
+        self.historyBoard.append([r[:] for r in self.board])
         if move.pieceCaptured != '--':
             self.countPiece[move.pieceCaptured[1]] -= 1
         # Đảo chiều người chơi.
@@ -95,7 +95,7 @@ class GameState():
         # Tốt phong hàm
         if move.pawnPromotion:
             self.board[move.endRow][move.endCol] = promotedPiece
-            # self.board[move.endRow][move.endCol] = move.pieceMoved[0] + 'Q'
+            self.countPiece[promotedPiece[1]] += 1
         
         # Xử lý nhập thành
         if move.castle:
@@ -114,14 +114,12 @@ class GameState():
         self.castleRightsLog.append(CastleRights(self.currentCastlingRight.wks, self.currentCastlingRight.bks, 
                                              self.currentCastlingRight.wqs, self.currentCastlingRight.bqs))
         
-        self.historyBoard.append(tuple(tuple(cell) for cell in row) for row in self.board)
-
         # Nếu nước đi không ăn quân và không di tốt
         if move.pieceCaptured == '--' and move.pieceMoved[1] != 'p':
             self.noCapturedMoves += 1
         else:
             self.noCapturedMoves = 0
-                
+                    
     # Hoàn tác nước đi trước đó.
     def undoMove(self):
         if len(self.moveLog) != 0:
@@ -216,19 +214,14 @@ class GameState():
             else:
                 self.staleMate = True
         else:
-            if self.noCapturedMoves >= 50:
+            if self.noCapturedMoves == 50:
                 self.staleMate = True
-            # if (len(self.historyBoard) >= 6) and (self.equal(self.historyBoard[-1], self.historyBoard[-3], self.historyBoard[-5])):
-            # if len(self.historyBoard) >= 6:
-            #     a1 = [tuple(tuple(cell) for cell in row) for row in self.historyBoard[-1]]
-            #     a2 = [tuple(tuple(cell) for cell in row) for row in self.historyBoard[-3]]
-            #     a3 = [tuple(tuple(cell) for cell in row) for row in self.historyBoard[-5]]
-            #     if a1 == a2 == a3:
-            #         self.staleMate = True
+            elif (len(self.historyBoard) >= 9) and self.historyBoard[-1] == self.historyBoard[-5] == self.historyBoard[-9]:
+                self.staleMate = True
             else:
-                self.checkMate = False
                 self.staleMate = self.missPiece()
         return moves
+    
     def missPiece(self):
         if self.countPiece == {'p':0, 'R':0, 'B':0, 'N':0, 'Q':0}:
             return True
