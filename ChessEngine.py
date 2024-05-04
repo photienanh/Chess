@@ -27,8 +27,11 @@
 # 4. (xong)
 # khi tốt qua đường chiếu tướng tốt đồng minh không thể bắt nó
 
-# 5.
+# 5. (xong)
 # tướng đang bị chiếu không được nhập thành
+
+# 6.
+# mã chiếu tướng các quân khác vẫn đi hướng không bảo vệ vua
 class GameState():
     def __init__(self):
         self.board = [
@@ -115,6 +118,23 @@ class GameState():
             self.noCapturedMoves += 1
         else:
             self.noCapturedMoves = 0
+<<<<<<< HEAD
+=======
+        self.repeated_position = self.check_repeated_position()
+        
+    def check_repeated_position(self):
+        # Kiểm tra xem vị trí cờ hiện tại đã xuất hiện bao nhiêu lần trong lịch sử nước đi
+        position_count = {}
+        for move in self.moveLog:
+            position = tuple(self.board[row][col] for row in range(8) for col in range(8))
+            if position in position_count:
+                position_count[position] += 1
+            else:
+                position_count[position] = 1
+        
+        # Nếu vị trí cờ hiện tại đã xuất hiện 3 lần, trả về 3
+        return max(position_count.values()) if position_count else 0
+>>>>>>> b1bb56fb4850b3153651efef66f5867b6922e359
         
     # Hoàn tác nước đi trước đó.
     def undoMove(self):
@@ -200,7 +220,7 @@ class GameState():
                 self.getKingMoves(kingRow, kingCol, moves)
         else:
             moves = self.getAllPossibleMoves()
-
+        
         if len(moves) == 0:
             if self.inCheck:
                 self.checkMate = True
@@ -239,6 +259,8 @@ class GameState():
                 endCol = c + d[1]*i
                 if 0 <= endRow < 8 and 0 <= endCol < 8: #Duyệt trong phạm vi bàn cờ
                     endPiece = self.board[endRow][endCol]
+                    if endPiece is None:
+                        continue
                     if endPiece[0] == allyColor: #Nếu là quân đồng minh
                         break
                     elif endPiece[0] == enemyColor: #Nếu là quân địch
@@ -307,6 +329,8 @@ class GameState():
                 endCol = startCol + d[1]*i
                 if 0 <= endRow < 8 and 0 <= endCol < 8:
                     endPiece = self.board[endRow][endCol]
+                    if endPiece is None:
+                        continue
                     if endPiece[0] == allyColor and endPiece[1] != 'K': #Nếu có quân đồng minh khác vua
                         if possiblePin == ():
                             possiblePin = (endRow, endCol, d[0], d[1])
@@ -567,6 +591,7 @@ class GameState():
     # Nhập thành phía vua
     def getKingsideCastleMoves(self, r, c, moves, allyColor):
         if c+3 < len(self.board[r]) and self.board[r][c + 1] == '--' and self.board[r][c + 2] == '--' and \
+         not self.squareUnderAttack(r, c, allyColor) and \
          not self.squareUnderAttack(r, c + 1, allyColor) and not self.squareUnderAttack(r, c + 2, allyColor) and \
          self.board[r][c + 3] == allyColor + 'R':
             moves.append(Move((r, c), (r, c + 2), self.board, castle = True))
@@ -574,6 +599,7 @@ class GameState():
     # Nhập thành phía hậu
     def getQueensideCastleMoves(self, r, c, moves, allyColor):
         if c-4 < len(self.board[r]) and self.board[r][c - 1] == '--' and self.board[r][c - 2] == '--' and self.board[r][c - 3] == '--' and \
+         not self.squareUnderAttack(r, c, allyColor) and \
          not self.squareUnderAttack(r, c - 1,allyColor) and not self.squareUnderAttack(r, c - 2, allyColor) and \
          self.board[r][c - 4] == allyColor + 'R':
             moves.append(Move((r, c), (r, c - 2), self.board, castle = True))
