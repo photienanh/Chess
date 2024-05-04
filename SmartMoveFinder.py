@@ -86,6 +86,7 @@ def findMoveNegamax(gs, validMoves, depth, alpha, beta, turnMutiplayer):
                 break
             
         return minScore
+    
 
 #white điểm càng cao càng tốt, black điểm càng thấp càng tốt
 def scoreBoard(gs):
