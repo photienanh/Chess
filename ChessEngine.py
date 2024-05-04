@@ -29,6 +29,9 @@
 
 # 5.
 # tướng đang bị chiếu không được nhập thành
+
+# 6.
+# mã chiếu tướng các quân khác vẫn đi hướng không bảo vệ vua
 class GameState():
     def __init__(self):
         self.board = [
