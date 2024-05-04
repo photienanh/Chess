@@ -117,19 +117,6 @@ class GameState():
             self.noCapturedMoves = 0
         self.repeated_position = self.check_repeated_position()
         
-    def check_repeated_position(self):
-        # Kiểm tra xem vị trí cờ hiện tại đã xuất hiện bao nhiêu lần trong lịch sử nước đi
-        position_count = {}
-        for move in self.moveLog:
-            position = tuple(self.board[row][col] for row in range(8) for col in range(8))
-            if position in position_count:
-                position_count[position] += 1
-            else:
-                position_count[position] = 1
-        
-        # Nếu vị trí cờ hiện tại đã xuất hiện 3 lần, trả về 3
-        return max(position_count.values()) if position_count else 0
-        
     # Hoàn tác nước đi trước đó.
     def undoMove(self):
         if len(self.moveLog) != 0:
