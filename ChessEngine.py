@@ -233,11 +233,11 @@ class GameState():
             return False
 
     # Kiểm tra xem vua của người chơi hiện tại có đang bị chiếu không hay không.
-    def inCheck(self):
-        if self.whiteToMove:
-            return self.squareUnderAttack(self.whiteKingLocation[0],self.whiteKingLocation[1])
-        else:
-            return self.squareUnderAttack(self.blackKingLocation[0],self.blackKingLocation[1])
+    # def inCheck(self):
+    #     if self.whiteToMove:
+    #         return self.squareUnderAttack(self.whiteKingLocation[0],self.whiteKingLocation[1])
+    #     else:
+    #         return self.squareUnderAttack(self.blackKingLocation[0],self.blackKingLocation[1])
     
     # Kiểm tra 1 ô trên bàn cờ có bị tấn công hay không.
     def squareUnderAttack(self, r, c, allyColor):
