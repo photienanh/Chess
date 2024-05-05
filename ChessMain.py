@@ -158,28 +158,44 @@ def drawGameState(screen, gs, validMoves, sqSelected):
     # Vẽ hình vuông trên bảng
     drawBoard(screen)
     # Đánh dấu nước đi hợp lệ
-    highlightSquares(screen, gs, validMoves, sqSelected)
-    # Đánh dấu các nước đã đi
-    drawMovedPieces(screen, gs.moveLog)
+    highlightSquares(screen, gs, validMoves, sqSelected, gs.moveLog)
     # Vẽ các quân cờ lên trên các hình vuông
     drawPieces(screen, gs.board)
 
 # Đánh dấu ô vuông mà quân cờ được chọn để di chuyển
-def highlightSquares(screen, gs, validMoves, sqSelected):
+def highlightSquares(screen, gs, validMoves, sqSelected, moveLog):
+    global colors
+    s = p.Surface((SQ_SIZE, SQ_SIZE), p.SRCALPHA)
+
+    s.set_alpha(90)
+    s.fill(p.Color('blue'))
     if sqSelected != ():
         r, c = sqSelected
         # sqSelected là 1 quân cờ có thể di chuyển
-        if gs.board[r][c][0] == ('w' if gs.whiteToMove else 'b'): 
-            # Đánh dấu ô vuông được chọn
-            s = p.Surface((SQ_SIZE, SQ_SIZE))
-            s.set_alpha(100)
-            s.fill(p.Color('blue'))
+        if gs.board[r][c] is not None and gs.board[r][c][0] == ('w' if gs.whiteToMove else 'b'): 
             screen.blit(s, (c * SQ_SIZE, r * SQ_SIZE))
-            # Đánh dấu ô vuông di chuyển được
-            s.fill(p.Color('yellow'))
             for move in validMoves:
                 if move.startRow == r and move.startCol == c:
-                    screen.blit(s, (move.endCol * SQ_SIZE, move.endRow * SQ_SIZE))
+                    center = (move.endCol * SQ_SIZE + SQ_SIZE // 2, move.endRow * SQ_SIZE + SQ_SIZE // 2)
+                    if move.pieceCaptured != '--':
+                        radius = 29
+                        p.draw.circle(screen, '#9C9C9C', center, radius)
+                        color = colors[((move.endRow + move.endCol) % 2)]
+                        radius = 25
+                        p.draw.circle(screen, color, center, radius)
+                        continue
+                    radius = 10  # Đường kính của hình tròn nhỏ
+                    # Vẽ hình tròn với màu và độ trong suốt
+                    p.draw.circle(screen, '#9C9C9C', center, radius)
+    
+    # Đánh dấu vị trí quân cờ vừa di chuyển
+    s.fill(p.Color('yellow'))
+    if len(moveLog) != 0:  # Kiểm tra nếu có quân cờ đã di chuyển
+        s.fill(p.Color('yellow'))
+        screen.blit(s, (moveLog[-1].endCol * SQ_SIZE, moveLog[-1].endRow * SQ_SIZE))
+        # Vẽ màu vàng cho ô kết thúc
+        screen.blit(s, (moveLog[-1].startCol * SQ_SIZE, moveLog[-1].startRow * SQ_SIZE))
+
 
 # Vẽ hình vuông lên bảng, hình vuông góc trên bên trái luôn là màu trắng
 def drawBoard(screen):
@@ -198,15 +214,6 @@ def drawPieces(screen, board):
             if piece != "--":
                 screen.blit(IMAGES[piece], p.Rect(c * SQ_SIZE,r * SQ_SIZE, SQ_SIZE, SQ_SIZE))
                 
-def drawMovedPieces(screen, moveLog):
-    if len(moveLog) != 0:  # Kiểm tra nếu có quân cờ đã di chuyển
-        # Vẽ màu xanh nước biển cho ô bắt đầu
-        startSquare = p.Rect(moveLog[-1].startCol * SQ_SIZE, moveLog[-1].startRow * SQ_SIZE, SQ_SIZE, SQ_SIZE)
-        p.draw.rect(screen, p.Color('#CDCD00'), startSquare)
-        # Vẽ màu vàng cho ô kết thúc
-        endSquare = p.Rect(moveLog[-1].endCol * SQ_SIZE, moveLog[-1].endRow * SQ_SIZE, SQ_SIZE, SQ_SIZE)
-        p.draw.rect(screen, p.Color('#EEC900'), endSquare)
-
 # Vẽ bảng chọn của tốt phong quân
 def drawPromotionOptions(screen, location):
     locationOptionRow = location.endRow
@@ -261,20 +268,13 @@ def animateMove(move, screen, gs, clock):
 def drawText(screen, text, color):
     # Tạo phông chữ (phông chữ, cỡ chữ, in đậm, in nghiêng)
     font = p.font.SysFont("Calibri", 32, True, False)
-
     # Đọc text và màu
     textObject = font.render(text, 0, p.Color('black'))
-
     # Tạo hình chữ nhật tính từ góc trên bên trái (0,0) có kích thước WxH và di chuyển ra giữa màn hình
     textLocation = p.Rect(0, 0, WIDTH, HEIGHT).move(WIDTH / 2 - textObject.get_width() / 2, HEIGHT / 2 - textObject.get_height() / 2)
-    
     # Vẽ text với màu đen trước đó vị trí lệch với vị trí ban đầu sang phải 2, xuống 2
     screen.blit(textObject, textLocation.move(2, 2))
-
-    # Đọc text với màu được gán
     textObject = font.render(text, 0, p.Color(color))
-
-    # Vẽ chèn lên chữ đen với vị trí lệch với vị trí ban đầu sang phải 3, xuống 3
     screen.blit(textObject, textLocation.move(3, 3)) 
 
 if __name__ == "__main__":
