@@ -2,7 +2,7 @@
 # 1. không chiếu hết nhưng hết nước đi theo luật(xong)
 # 2. di chuyển 50 bước liên tiếp (cả 2 người) không có nước đi bắt quân hoặc k đi tốt(xong)
 # 3. cùng 1 thế cờ 3 lần 1 ng
-# 4. thiếu quân
+# 4. thiếu quân(xong)
 
 
 # Chưa làm(xong)
@@ -35,12 +35,12 @@
 class GameState():
     def __init__(self):
         self.board = [
-            ["bR","bN","bB","bQ","bK","bB","bN","bR"],
+            ["bR","bN","bB","bQ","bK","bB","--","bR"],
             ["bp","bp","bp","bp","bp","bp","bp","bp"],
             ["--","--","--","--","--","--","--","--"],
             ["--","--","--","--","--","--","--","--"],
             ["--","--","--","--","--","--","--","--"],
-            ["--","--","--","--","--","--","--","--"],
+            ["--","--","--","bN","--","--","--","--"],
             ["wp","wp","wp","wp","wp","wp","wp","wp"],
             ["wR","wN","wB","wQ","wK","wB","wN","wR"]]
         self.moveFunctions = {"p": self.getPawnMoves, "R": self.getRookMoves, "N":self.getKnightMoves,
