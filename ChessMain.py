@@ -157,16 +157,15 @@ def main():
 def drawGameState(screen, gs, validMoves, sqSelected):
     # Vẽ hình vuông trên bảng
     drawBoard(screen)
-    # Đánh dấu nước đi hợp lệ
     highlightSquares(screen, gs, validMoves, sqSelected, gs.moveLog)
     # Vẽ các quân cờ lên trên các hình vuông
     drawPieces(screen, gs.board)
 
-# Đánh dấu ô vuông mà quân cờ được chọn để di chuyển
 def highlightSquares(screen, gs, validMoves, sqSelected, moveLog):
     global colors
-    s = p.Surface((SQ_SIZE, SQ_SIZE), p.SRCALPHA)
+    s = p.Surface((SQ_SIZE, SQ_SIZE))
 
+    # Đánh dấu quân cờ được chọn là màu xanh
     s.set_alpha(90)
     s.fill(p.Color('blue'))
     if sqSelected != ():
@@ -176,6 +175,7 @@ def highlightSquares(screen, gs, validMoves, sqSelected, moveLog):
             screen.blit(s, (c * SQ_SIZE, r * SQ_SIZE))
             for move in validMoves:
                 if move.startRow == r and move.startCol == c:
+                    # Đặt vị trí cho hình tròn
                     center = (move.endCol * SQ_SIZE + SQ_SIZE // 2, move.endRow * SQ_SIZE + SQ_SIZE // 2)
                     if move.pieceCaptured != '--':
                         radius = 29
@@ -184,11 +184,12 @@ def highlightSquares(screen, gs, validMoves, sqSelected, moveLog):
                         radius = 25
                         p.draw.circle(screen, color, center, radius)
                         continue
-                    radius = 10  # Đường kính của hình tròn nhỏ
-                    # Vẽ hình tròn với màu và độ trong suốt
+                    radius = 10
+                    # Vẽ hình tròn màu xám
                     p.draw.circle(screen, '#9C9C9C', center, radius)
     
-    # Đánh dấu vị trí quân cờ vừa di chuyển
+    # Đánh dấu vị trí quân cờ vừa di chuyển là màu vàng
+    s.set_alpha(130)
     s.fill(p.Color('yellow'))
     if len(moveLog) != 0:  # Kiểm tra nếu có quân cờ đã di chuyển
         s.fill(p.Color('yellow'))
