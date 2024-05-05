@@ -1,11 +1,7 @@
 # Luật hòa cờ
 # 1. không chiếu hết nhưng hết nước đi theo luật(xong)
 # 2. di chuyển 50 bước liên tiếp (cả 2 người) không có nước đi bắt quân hoặc k đi tốt(xong)
-<<<<<<< HEAD
 # 3. cùng 1 thế cờ 3 lần 1 ng
-=======
-# 3. cùng 1 thế cờ 3 lần liên tiếp
->>>>>>> e5c7338bfa4a0aeb3b41e892961dacd07918d3c1
 # 4. thiếu quân(xong)
 
 
@@ -39,12 +35,12 @@
 class GameState():
     def __init__(self):
         self.board = [
-            ["bR","bN","bB","bQ","bK","bB","--","bR"],
+            ["bR","bN","bB","bQ","bK","bB","bN","bR"],
             ["bp","bp","bp","bp","bp","bp","bp","bp"],
             ["--","--","--","--","--","--","--","--"],
             ["--","--","--","--","--","--","--","--"],
             ["--","--","--","--","--","--","--","--"],
-            ["--","--","--","bN","--","--","--","--"],
+            ["--","--","--","--","--","--","--","--"],
             ["wp","wp","wp","wp","wp","wp","wp","wp"],
             ["wR","wN","wB","wQ","wK","wB","wN","wR"]]
         self.moveFunctions = {"p": self.getPawnMoves, "R": self.getRookMoves, "N":self.getKnightMoves,
@@ -55,7 +51,7 @@ class GameState():
         self.blackKingLocation = (0,4) #Vị trí vua đen
         self.noCapturedMoves = 0 #Lịch sử ăn quân và di tốt
         self.historyBoard = [([r[:] for r in self.board])]
-        self.countPiece = {'p':16, 'R':4, 'B':4, 'N':4, 'Q':2}
+        self.countPiece = {'p':16, 'R':4, 'B':4, 'N':4, 'Q':2, 'K':2}
         self.inCheck = False #Bị chiếu
         self.pins = [] #Danh sách ghim
         self.checks = [] #Danh sách chiếu
@@ -100,6 +96,7 @@ class GameState():
         if move.pawnPromotion:
             self.board[move.endRow][move.endCol] = promotedPiece
             self.countPiece[promotedPiece[1]] += 1
+            self.countPiece['p'] -= 1
         
         # Xử lý nhập thành
         if move.castle:
@@ -132,6 +129,7 @@ class GameState():
             if move.pieceCaptured != '--':
                 self.countPiece[move.pieceCaptured[1]] += 1
             self.historyBoard.pop()
+            piece = self.board[move.endRow][move.endCol]
             self.board[move.startRow][move.startCol] = move.pieceMoved #Trả quân về vị trí ban đầu
             self.board[move.endRow][move.endCol] = move.pieceCaptured #Trả lại quân bị ăn
             self.whiteToMove = not self.whiteToMove #Đảo chiều người chơi
@@ -151,6 +149,9 @@ class GameState():
                 self.enPassantPossibleLog.pop() 
                 self.enPassantPossible = self.enPassantPossibleLog[-1]
 
+            if move.pawnPromotion:
+                self.countPiece[piece[1]] -= 1
+                self.countPiece['p'] += 1
             # Trả lại trạng thái nhập thành
             self.castleRightsLog.pop() 
             newRights = self.castleRightsLog[-1]
@@ -227,11 +228,11 @@ class GameState():
         return moves
     
     def missPiece(self):
-        if self.countPiece == {'p':0, 'R':0, 'B':0, 'N':0, 'Q':0}:
+        if self.countPiece == {'p':0, 'R':0, 'B':0, 'N':0, 'Q':0, 'K':2}:
             return True
-        elif self.countPiece == {'p':0, 'R':0, 'B':1, 'N':0, 'Q':0}:
+        elif self.countPiece == {'p':0, 'R':0, 'B':1, 'N':0, 'Q':0, 'K':2}:
             return True
-        elif self.countPiece == {'p':0, 'R':0, 'B':0, 'N':1, 'Q':0}:
+        elif self.countPiece == {'p':0, 'R':0, 'B':0, 'N':1, 'Q':0, 'K':2}:
             return True
         else:
             return False
