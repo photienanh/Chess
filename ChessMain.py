@@ -1,11 +1,11 @@
 # Chưa làm
 # 1. (xong)
 # đánh dấu nước đã đi
-# 2. 
+# 2. (xong)
 # thay đổi cách đánh dấu nước đi hợp lệ
-# 3.
+# 3. 
 # đánh số và chữ cho ô
-# 4.
+# 4. 
 # giao diện chọn số người chơi
 
 # Lỗi

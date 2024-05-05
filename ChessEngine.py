@@ -1,7 +1,7 @@
 # Luật hòa cờ
 # 1. không chiếu hết nhưng hết nước đi theo luật(xong)
 # 2. di chuyển 50 bước liên tiếp (cả 2 người) không có nước đi bắt quân hoặc k đi tốt(xong)
-# 3. cùng 1 thế cờ 3 lần 1 ng
+# 3. cùng 1 thế cờ 3 lần 1 ng (xong)
 # 4. thiếu quân(xong)
 
 
@@ -30,7 +30,7 @@
 # 5. (xong)
 # tướng đang bị chiếu không được nhập thành
 
-# 6.
+# 6. (xong)
 # mã chiếu tướng các quân khác vẫn đi hướng không bảo vệ vua
 class GameState():
     def __init__(self):
@@ -201,13 +201,13 @@ class GameState():
                         if validSquare[0] == checkRow and validSquare[1] == checkCol:
                             break
                 
-                    # Loại bỏ các nước đi không bảo vệ được vua
-                    for i in range(len(moves) - 1, -1, -1): #Duyệt từ cuối danh sách lên đầu
-                        if moves[i].pieceMoved[1] != 'K':
-                            if not (moves[i].endRow, moves[i].endCol) in validSquares:
-                                if moves[i].enPassant:
-                                    continue
-                                moves.remove(moves[i])
+                # Loại bỏ các nước đi không bảo vệ được vua
+                for i in range(len(moves) - 1, -1, -1): #Duyệt từ cuối danh sách lên đầu
+                    if moves[i].pieceMoved[1] != 'K':
+                        if not (moves[i].endRow, moves[i].endCol) in validSquares:
+                            if moves[i].enPassant:
+                                continue
+                            moves.remove(moves[i])
             else:
                 self.getKingMoves(kingRow, kingCol, moves)
         else:
@@ -237,13 +237,6 @@ class GameState():
         else:
             return False
 
-    # Kiểm tra xem vua của người chơi hiện tại có đang bị chiếu không hay không.
-    # def inCheck(self):
-    #     if self.whiteToMove:
-    #         return self.squareUnderAttack(self.whiteKingLocation[0],self.whiteKingLocation[1])
-    #     else:
-    #         return self.squareUnderAttack(self.blackKingLocation[0],self.blackKingLocation[1])
-    
     # Kiểm tra 1 ô trên bàn cờ có bị tấn công hay không.
     def squareUnderAttack(self, r, c, allyColor):
         enemyColor = 'w' if allyColor == 'b' else 'b'
@@ -358,6 +351,7 @@ class GameState():
                 if endPiece[0] == enemyColor and endPiece[1] == 'N':
                     inCheck = True
                     checks.append((endRow, endCol, m[0], m[1]))
+                    break
         return inCheck, pins, checks
     
     # Cập nhật quyền nhập thành
