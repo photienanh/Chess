@@ -7,6 +7,8 @@
 # đánh số và chữ cho ô
 # 4. 
 # giao diện chọn số người chơi
+# 5.(xong)
+# thu nhỏ hình ảnh
 
 # Lỗi
 # 1.(xong)
@@ -28,7 +30,7 @@ playerTwo = True
 def loadImages():
     pieces = ['wp', 'wR', 'wN', 'wB', 'wK', 'wQ', 'bp', 'bR', 'bN', 'bB', 'bK', 'bQ']
     for piece in pieces:
-        IMAGES[piece] = p.transform.scale(p.image.load("images/" + piece + ".png"), (SQ_SIZE, SQ_SIZE))
+        IMAGES[piece] = p.transform.scale(p.image.load("images/" + piece + ".png"), (50, 50))
 
 # Xử lý dữ liệu đầu vào của người dùng và cập nhật đồ họa
 def main():
@@ -197,6 +199,8 @@ def highlightSquares(screen, gs, validMoves, sqSelected, moveLog):
         # Vẽ màu vàng cho ô kết thúc
         screen.blit(s, (moveLog[-1].startCol * SQ_SIZE, moveLog[-1].startRow * SQ_SIZE))
 
+def drawAlphabetNumber():
+    pass
 
 # Vẽ hình vuông lên bảng, hình vuông góc trên bên trái luôn là màu trắng
 def drawBoard(screen):
@@ -213,8 +217,9 @@ def drawPieces(screen, board):
         for c in range(DIMENSION):
             piece = board[r][c]
             if piece != "--":
-                screen.blit(IMAGES[piece], p.Rect(c * SQ_SIZE,r * SQ_SIZE, SQ_SIZE, SQ_SIZE))
-                
+                image = IMAGES[piece]
+                screen.blit(image, p.Rect(c * SQ_SIZE + SQ_SIZE / 2 - image.get_width() / 2,r * SQ_SIZE + SQ_SIZE / 2 - image.get_height() / 2, SQ_SIZE, SQ_SIZE))
+
 # Vẽ bảng chọn của tốt phong quân
 def drawPromotionOptions(screen, location):
     locationOptionRow = location.endRow
@@ -233,7 +238,8 @@ def drawPromotionOptions(screen, location):
         
     promotionOptions = ['Q', 'R', 'B', 'N']
     for i, piece in enumerate(promotionOptions):
-        screen.blit(IMAGES[location.pieceMoved[0] + piece], p.Rect(locationOptionCol * SQ_SIZE, locationOptionRow * SQ_SIZE  + (i * SQ_SIZE), SQ_SIZE, SQ_SIZE))
+        image = IMAGES[location.pieceMoved[0] + piece]
+        screen.blit(image, p.Rect(locationOptionCol * SQ_SIZE + SQ_SIZE / 2 - image.get_width() / 2, locationOptionRow * SQ_SIZE + SQ_SIZE / 2 - image.get_height() / 2 + (i * SQ_SIZE), SQ_SIZE, SQ_SIZE))
 
 # Hoạt ảnh di chuyển
 def animateMove(move, screen, gs, clock):
@@ -241,10 +247,12 @@ def animateMove(move, screen, gs, clock):
     dR = move.endRow - move.startRow
     dC = move.endCol - move.startCol
     # Số lượng khung hình cần để hoàn thành bước đi.
-    frameCount = (abs(dR) + abs(dC)) * 3
+    frameCount = (abs(dR) + abs(dC)) * 4
     for frame in range(frameCount + 1):
         # Tính toán vị trí hàng và cột của quân cờ tại từng khung hình trong quá trình di chuyển.
         r, c = (move.startRow + dR * frame / frameCount, move.startCol + dC * frame / frameCount)
+        
+        # Vẽ lại bàn cờ
         drawBoard(screen)
         drawPieces(screen, gs.board)
         
@@ -255,16 +263,18 @@ def animateMove(move, screen, gs, clock):
 
         # Nếu ô cuối cùng là quân thì vẽ quân
         if move.pieceCaptured != '--':
-            screen.blit(IMAGES[move.pieceCaptured], p.Rect(move.endCol * SQ_SIZE, move.endRow * SQ_SIZE, SQ_SIZE, SQ_SIZE))
+            imageC = IMAGES[move.pieceCaptured]
+            screen.blit(imageC, p.Rect(move.endCol * SQ_SIZE + SQ_SIZE / 2 - imageC.get_width() / 2, move.endRow * SQ_SIZE + SQ_SIZE / 2 - imageC.get_height() / 2, SQ_SIZE, SQ_SIZE))
 
         # Nếu ô bắt đầu là quân thì vẽ quân
         if move.pieceMoved != '--':
-            screen.blit(IMAGES[move.pieceMoved], p.Rect(c * SQ_SIZE, r * SQ_SIZE, SQ_SIZE, SQ_SIZE))
+            imageM = IMAGES[move.pieceMoved]
+            screen.blit(imageM, p.Rect(c * SQ_SIZE + SQ_SIZE / 2 - imageM.get_width() / 2, r * SQ_SIZE + SQ_SIZE / 2 - imageM.get_height() / 2, SQ_SIZE, SQ_SIZE))
         
         # Cập nhật hình ảnh
         p.display.flip()
         # Số khung hình mỗi giây
-        clock.tick(150)
+        clock.tick(100)
 
 def drawText(screen, text, color):
     # Tạo phông chữ (phông chữ, cỡ chữ, in đậm, in nghiêng)
