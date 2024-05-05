@@ -3,12 +3,12 @@
 # đánh dấu nước đã đi
 # 2. (xong)
 # thay đổi cách đánh dấu nước đi hợp lệ
-# 3. 
+# 3. (xong)
 # đánh số và chữ cho ô
 # 4. 
 # giao diện chọn số người chơi
 # 5.(xong)
-# thu nhỏ hình ảnh
+# co hình ảnh
 
 # Lỗi
 # 1.(xong)
@@ -160,6 +160,8 @@ def drawGameState(screen, gs, validMoves, sqSelected):
     # Vẽ hình vuông trên bảng
     drawBoard(screen)
     highlightSquares(screen, gs, validMoves, sqSelected, gs.moveLog)
+    # Đánh số và chữ
+    drawAlphabetNumber(screen)
     # Vẽ các quân cờ lên trên các hình vuông
     drawPieces(screen, gs.board)
 
@@ -179,7 +181,7 @@ def highlightSquares(screen, gs, validMoves, sqSelected, moveLog):
                 if move.startRow == r and move.startCol == c:
                     # Đặt vị trí cho hình tròn
                     center = (move.endCol * SQ_SIZE + SQ_SIZE // 2, move.endRow * SQ_SIZE + SQ_SIZE // 2)
-                    if move.pieceCaptured != '--':
+                    if move.pieceCaptured != '--' or move.enPassant:
                         radius = 29
                         p.draw.circle(screen, '#9C9C9C', center, radius)
                         color = colors[((move.endRow + move.endCol) % 2)]
@@ -199,8 +201,18 @@ def highlightSquares(screen, gs, validMoves, sqSelected, moveLog):
         # Vẽ màu vàng cho ô kết thúc
         screen.blit(s, (moveLog[-1].startCol * SQ_SIZE, moveLog[-1].startRow * SQ_SIZE))
 
-def drawAlphabetNumber():
-    pass
+def drawAlphabetNumber(screen):
+    font = p.font.SysFont("Calibri", 13, True, False)
+    for i, char in enumerate(range(ord('a'), ord('h') + 1)):
+        # In chữ
+        alphabet = font.render(chr(char), True, p.Color('#556B2F'))
+        alphabetLocation = p.Rect(0, 0, WIDTH, HEIGHT).move(SQ_SIZE / 10, i * SQ_SIZE + SQ_SIZE / 10)
+        screen.blit(alphabet, alphabetLocation)
+
+        # In số
+        number = font.render(str(i + 1), True, p.Color('#556B2F'))
+        numberLocation = p.Rect(0, SQ_SIZE * 7, WIDTH, HEIGHT).move((i + 1) * SQ_SIZE - 10, SQ_SIZE - 15)
+        screen.blit(number, numberLocation)
 
 # Vẽ hình vuông lên bảng, hình vuông góc trên bên trái luôn là màu trắng
 def drawBoard(screen):
@@ -254,6 +266,7 @@ def animateMove(move, screen, gs, clock):
         
         # Vẽ lại bàn cờ
         drawBoard(screen)
+        drawAlphabetNumber(screen)
         drawPieces(screen, gs.board)
         
         # Vẽ màu lên ô cuối cùng khi di chuyển
