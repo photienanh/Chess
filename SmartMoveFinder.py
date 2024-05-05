@@ -48,10 +48,10 @@ def findBestMinimaxMove(gs, validMoves):
     global nextMove
     nextMove = None
     random.shuffle(validMoves)
-    findMoveNegamax(gs, validMoves, DEPTH, -CHECKMATE, CHECKMATE, True if gs.whiteToMove else False)      
+    findMiniMaxScore(gs, validMoves, DEPTH, -CHECKMATE, CHECKMATE, True if gs.whiteToMove else False)      
     return nextMove
 
-def findMoveNegamax(gs, validMoves, depth, alpha, beta, turnMutiplayer):
+def findMiniMaxScore(gs, validMoves, depth, alpha, beta, turnMutiplayer):
     global nextMove
     if depth == 0:
         return Evalute.evaluate_board(gs)
@@ -60,7 +60,7 @@ def findMoveNegamax(gs, validMoves, depth, alpha, beta, turnMutiplayer):
         for move in validMoves:
             gs.makeMove(move)
             nextValidMoves = gs.getValidMoves()
-            score = findMoveNegamax(gs, nextValidMoves, depth-1, alpha, beta, False)
+            score = findMiniMaxScore(gs, nextValidMoves, depth-1, alpha, beta, False)
             if score > maxScore:
                 maxScore = score
                 if depth == DEPTH:
@@ -75,7 +75,7 @@ def findMoveNegamax(gs, validMoves, depth, alpha, beta, turnMutiplayer):
         for move in validMoves:
             gs.makeMove(move)
             nextValidMoves = gs.getValidMoves()
-            score = findMoveNegamax(gs, nextValidMoves, depth-1, alpha, beta, True)
+            score = findMiniMaxScore(gs, nextValidMoves, depth-1, alpha, beta, True)
             if score < minScore:
                 minScore = score
                 if depth == DEPTH:
@@ -89,24 +89,6 @@ def findMoveNegamax(gs, validMoves, depth, alpha, beta, turnMutiplayer):
     
 
 #white điểm càng cao càng tốt, black điểm càng thấp càng tốt
-def scoreBoard(gs):
-    if gs.checkMate:
-        if gs.whiteToMove:
-            return -CHECKMATE # black win
-        else:
-            return CHECKMATE #white win
-    elif gs.staleMate:
-        return STALEMATE
-
-    score = 0
-    for row in gs.board:
-        for square in row:
-            if square[0] == "w":
-                score += pieceScore[square[1]]
-            elif square[0] == "b":
-                score -= pieceScore[square[1]]
-    return score
-
 def scoreMaterial(board):
     score = 0
     for row in board:
