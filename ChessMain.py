@@ -23,8 +23,8 @@ SQ_SIZE = HEIGHT // DIMENSION # Kích thước mỗi ô trên bàn cờ
 MAX_FPS = 15 # Số lần lặp trên 1 giây để cập nhật trạng thái trò chơi
 IMAGES = {}
 
-playerOne = True # True = playerTurn = whiteTurn
-playerTwo = True
+playerOne = False # True = playerTurn = whiteTurn
+playerTwo = False
 
 # Khởi tạo từ điển của các ảnh
 def loadImages():
@@ -44,12 +44,50 @@ def main():
     animate = False
     loadImages()
     running = True
+    choosePlayer = True
     # Nếu không có ô vuông nào chọn, xử lý lần nhấp chuột cuối cùng (tuple: (col, row))
     sqSelected = ()
     # Lưu lại các lần nhấp chuột
     playerClicks = []
     gameOver = False
     choosePP = False
+
+    # while choosePlayer:
+    #     screen.fill(p.Color("white"))
+        
+    #     # Vẽ nút hoặc ô để chọn số người chơi
+    #     # Ví dụ: 1 người chơi
+    #     player1_button = p.Rect(50, 50, 200, 50)
+    #     p.draw.rect(screen, (0, 255, 0), player1_button)
+        
+    #     # Ví dụ: 2 người chơi
+    #     player2_button = p.Rect(50, 150, 200, 50)
+    #     p.draw.rect(screen, (255, 0, 0), player2_button)
+        
+    #     # Hiển thị văn bản trên nút
+    #     font = p.font.SysFont(None, 30)
+    #     text1 = font.render('1 Người chơi', True, (255, 255, 255))
+    #     text2 = font.render('2 Người chơi', True, (255, 255, 255))
+    #     screen.blit(text1, (player1_button.x + 50, player1_button.y + 10))
+    #     screen.blit(text2, (player2_button.x + 50, player2_button.y + 10))
+        
+    #     p.display.flip()
+        
+    #     for event in p.event.get():
+    #         if event.type == p.QUIT:
+    #             running = False
+    #             p.quit()
+    #         elif event.type == p.MOUSEBUTTONDOWN:
+    #             mouse_pos = event.pos
+    #             # Kiểm tra xem người chơi đã nhấp vào nút nào
+    #             if player1_button.collidepoint(mouse_pos):
+    #                 playerOne = True
+    #                 playerTwo = False
+    #                 running = False
+    #             elif player2_button.collidepoint(mouse_pos):
+    #                 playerOne = True
+    #                 playerTwo = True
+    #                 running = False
 
     while running:
         humanTurn = (gs.whiteToMove and playerOne) or (not gs.whiteToMove and playerTwo)
@@ -228,7 +266,7 @@ def drawPieces(screen, board):
     for r in range(DIMENSION):
         for c in range(DIMENSION):
             piece = board[r][c]
-            if piece != "--":
+            if piece != "--" and piece is not None:
                 image = IMAGES[piece]
                 screen.blit(image, p.Rect(c * SQ_SIZE + SQ_SIZE / 2 - image.get_width() / 2,r * SQ_SIZE + SQ_SIZE / 2 - image.get_height() / 2, SQ_SIZE, SQ_SIZE))
 
@@ -277,7 +315,10 @@ def animateMove(move, screen, gs, clock):
         # Nếu ô cuối cùng là quân thì vẽ quân
         if move.pieceCaptured != '--':
             imageC = IMAGES[move.pieceCaptured]
-            screen.blit(imageC, p.Rect(move.endCol * SQ_SIZE + SQ_SIZE / 2 - imageC.get_width() / 2, move.endRow * SQ_SIZE + SQ_SIZE / 2 - imageC.get_height() / 2, SQ_SIZE, SQ_SIZE))
+            if move.enPassant:
+                screen.blit(imageC, p.Rect(move.endCol * SQ_SIZE + SQ_SIZE / 2 - imageC.get_width() / 2, move.startRow * SQ_SIZE + SQ_SIZE / 2 - imageC.get_height() / 2, SQ_SIZE, SQ_SIZE))
+            else:
+                screen.blit(imageC, p.Rect(move.endCol * SQ_SIZE + SQ_SIZE / 2 - imageC.get_width() / 2, move.endRow * SQ_SIZE + SQ_SIZE / 2 - imageC.get_height() / 2, SQ_SIZE, SQ_SIZE))
 
         # Nếu ô bắt đầu là quân thì vẽ quân
         if move.pieceMoved != '--':

@@ -122,7 +122,7 @@ def evaluate_board(gs) -> float:
     for row in range(8):
         for square in range(8):
             piece = gs.board[row][square]
-            if piece  == "--":
+            if piece is None or piece == "--":
                 continue
             value = piece_value[piece[1]] + evaluate_piece(piece[1], piece[0], [row, square], end_game)
             total += value if piece[0] == "w" else -value
@@ -133,10 +133,11 @@ def check_end_game(board) -> bool:
     minors = 0
     for row in board:
         for square in row:
-            if square[1] == "Q":
-                queens += 1
-            if square[1] == "B" or square[1] == "N":
-                minors += 1
+            if square is not None:
+                if square[1] == "Q":
+                    queens += 1
+                if square[1] == "B" or square[1] == "N":
+                    minors += 1
 
     if queens == 0 or (queens == 2 and minors <= 1):
         return True

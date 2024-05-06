@@ -41,7 +41,7 @@ class GameState():
             ["--","--","--","--","--","--","--","--"],
             ["--","--","--","--","--","--","--","--"],
             ["--","--","--","--","--","--","--","--"],
-            ["wp","wp","wp","wp","wp","wp","wp","wp"],
+            ["wp","wp","wp","wp","wp","wp","bp","bp"],
             ["wR","wN","wB","wQ","wK","wB","wN","wR"]]
         self.moveFunctions = {"p": self.getPawnMoves, "R": self.getRookMoves, "N":self.getKnightMoves,
                             "B": self.getBishopMoves, "Q": self.getQueenMoves, "K": self.getKingMoves}
@@ -95,8 +95,10 @@ class GameState():
         # Tốt phong hàm
         if move.pawnPromotion:
             self.board[move.endRow][move.endCol] = promotedPiece
-            self.countPiece[promotedPiece[1]] += 1
-            self.countPiece['p'] -= 1
+            if promotedPiece is not None:
+                self.board[move.endRow][move.endCol] = promotedPiece
+                self.countPiece[promotedPiece[1]] += 1
+                self.countPiece['p'] -= 1
         
         # Xử lý nhập thành
         if move.castle:
@@ -149,7 +151,7 @@ class GameState():
                 self.enPassantPossibleLog.pop() 
                 self.enPassantPossible = self.enPassantPossibleLog[-1]
 
-            if move.pawnPromotion:
+            if move.pawnPromotion and piece is not None:
                 self.countPiece[piece[1]] -= 1
                 self.countPiece['p'] += 1
             # Trả lại trạng thái nhập thành
@@ -284,10 +286,11 @@ class GameState():
         # Duyệt toàn bộ bàn cờ
         for r in range(len(self.board)):
             for c in range(len(self.board[r])):
-                turn = self.board[r][c][0] #Xác định màu quân
-                if (turn == 'w' and self.whiteToMove) or (turn == 'b' and not self.whiteToMove): 
-                    piece = self.board[r][c][1]
-                    self.moveFunctions[piece](r, c, moves)
+                if self.board[r][c] is not None:
+                    turn = self.board[r][c][0] #Xác định màu quân
+                    if (turn == 'w' and self.whiteToMove) or (turn == 'b' and not self.whiteToMove): 
+                        piece = self.board[r][c][1]
+                        self.moveFunctions[piece](r, c, moves)
         return moves
     
     # Kiểm tra vua có bị ghim hoặc bị chiếu
@@ -348,7 +351,7 @@ class GameState():
             endCol = startCol + m[1]
             if 0 <= endRow < 8 and 0 <= endCol < 8:
                 endPiece = self.board[endRow][endCol]
-                if endPiece[0] == enemyColor and endPiece[1] == 'N':
+                if endPiece is not None and endPiece[0] == enemyColor and endPiece[1] == 'N':
                     inCheck = True
                     checks.append((endRow, endCol, m[0], m[1]))
                     break
@@ -408,7 +411,7 @@ class GameState():
         if c - 1 >= 0: #Giới hạn bên trái bàn cờ
             if not piecePinned or pinDirection == (moveAmount, -1): #Nếu không bị chặn hoặc hướng chặn chéo 1 ô liền kề
                 if 0 <= r + moveAmount < 8: #Giới hạn trên dưới bàn cờ
-                    if self.board[r + moveAmount][c - 1][0] == enemyColor: #Quân địch ở chéo 1 ô
+                    if self.board[r + moveAmount][c - 1] is not None and self.board[r + moveAmount][c - 1][0] == enemyColor: #Quân địch ở chéo 1 ô
                         moves.append(Move((r, c), (r + moveAmount, c - 1), self.board)) #Ăn quân
                     if (r + moveAmount, c - 1) == self.enPassantPossible: #Nếu là nước đi bắt quân qua đường
                         attackingPiece = blockkingPiece = False
@@ -480,13 +483,14 @@ class GameState():
                 if 0 <= endRow < 8 and 0 <= endCol <8:
                     if not piecePinned or pinDirection == d or pinDirection == (-d[0], -d[1]): #Nếu không bị ghim hoặc di chuyển trong hướng ghim
                         endPiece = self.board[endRow][endCol]
-                        if endPiece == "--": #Nếu ô trống
-                            moves.append(Move((r, c), (endRow, endCol), self.board))
-                        elif endPiece[0] == enemyColor: #Nếu gặp quân địch
-                            moves.append(Move((r, c), (endRow, endCol), self.board))
-                            break
-                        else: #Nếu gặp quân ta
-                            break
+                        if endPiece is not None:
+                            if endPiece == "--": #Nếu ô trống
+                                moves.append(Move((r, c), (endRow, endCol), self.board))
+                            elif endPiece[0] == enemyColor: #Nếu gặp quân địch
+                                moves.append(Move((r, c), (endRow, endCol), self.board))
+                                break
+                            else: #Nếu gặp quân ta
+                                break
                 else:
                     break
 
@@ -506,7 +510,7 @@ class GameState():
             if 0 <= endRow < 8 and 0 <= endCol < 8:
                 if not piecePinned:
                     endPiece = self.board[endRow][endCol]
-                    if endPiece[0] != allyColor:
+                    if endPiece is not None and endPiece[0] != allyColor:
                         moves.append(Move((r,c), (endRow, endCol), self.board))
     
     # Nước đi của tượng
@@ -554,7 +558,7 @@ class GameState():
             endCol = c + colMoves[i]
             if 0 <= endRow < 8 and 0 <= endCol < 8:
                 endPiece = self.board[endRow][endCol]
-                if endPiece[0] != allyColor:
+                if endPiece is not None and endPiece[0] != allyColor:
                     if allyColor == 'w':
                         self.whiteKingLocation = (endRow, endCol)
                     else:
@@ -613,6 +617,8 @@ class Move():
         self.enPassant = enPassant
         self.castle = castle
         self.moveID = self.startRow * 1000 + self.startCol * 100 + self.endRow * 10 + self.endCol
+        if self.enPassant:
+            self.pieceCaptured = 'bp' if self.pieceMoved[0] == 'w' else 'wp'
 
     def create_none():
         return None
