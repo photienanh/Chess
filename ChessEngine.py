@@ -32,16 +32,20 @@
 
 # 6. (xong)
 # mã chiếu tướng các quân khác vẫn đi hướng không bảo vệ vua
+
+# 7. (xong)
+# AI không phong hậu
+
 class GameState():
     def __init__(self):
         self.board = [
             ["bR","bN","bB","bQ","bK","bB","bN","bR"],
-            ["bp","bp","bp","bp","bp","bp","bp","bp"],
+            ["bp","bp","bp","bp","bp","bp","wp","bp"],
             ["--","--","--","--","--","--","--","--"],
             ["--","--","--","--","--","--","--","--"],
             ["--","--","--","--","--","--","--","--"],
             ["--","--","--","--","--","--","--","--"],
-            ["wp","wp","wp","wp","wp","wp","wp","wp"],
+            ["wp","wp","wp","wp","wp","wp","bp","wp"],
             ["wR","wN","wB","wQ","wK","wB","wN","wR"]]
         self.moveFunctions = {"p": self.getPawnMoves, "R": self.getRookMoves, "N":self.getKnightMoves,
                             "B": self.getBishopMoves, "Q": self.getQueenMoves, "K": self.getKingMoves}
@@ -66,7 +70,7 @@ class GameState():
     # Cập nhật bàn cờ với vị trí mới của quân cờ.
     # Thêm nước đi vào lịch sử nước đi.
     # Cập nhật các biến khác như lượt của người chơi, vị trí của vua, quyền nhập thành, v.v.
-    def makeMove(self, move, promotedPiece = None):
+    def makeMove(self, move):
         self.board[move.endRow][move.endCol] = move.pieceMoved
         self.board[move.startRow][move.startCol] = "--"
         self.moveLog.append(move)
@@ -94,10 +98,10 @@ class GameState():
         
         # Tốt phong hàm
         if move.pawnPromotion:
-            self.board[move.endRow][move.endCol] = promotedPiece
-            if promotedPiece is not None:
-                self.board[move.endRow][move.endCol] = promotedPiece
-                self.countPiece[promotedPiece[1]] += 1
+            self.board[move.endRow][move.endCol] = move.promotedPiece
+            if move.promotedPiece is not None:
+                self.board[move.endRow][move.endCol] = move.promotedPiece
+                self.countPiece[move.promotedPiece[1]] += 1
                 self.countPiece['p'] -= 1
         
         # Xử lý nhập thành
@@ -131,7 +135,6 @@ class GameState():
             if move.pieceCaptured != '--':
                 self.countPiece[move.pieceCaptured[1]] += 1
             self.historyBoard.pop()
-            piece = self.board[move.endRow][move.endCol]
             self.board[move.startRow][move.startCol] = move.pieceMoved #Trả quân về vị trí ban đầu
             self.board[move.endRow][move.endCol] = move.pieceCaptured #Trả lại quân bị ăn
             self.whiteToMove = not self.whiteToMove #Đảo chiều người chơi
@@ -151,8 +154,8 @@ class GameState():
                 self.enPassantPossibleLog.pop() 
                 self.enPassantPossible = self.enPassantPossibleLog[-1]
 
-            if move.pawnPromotion and piece is not None:
-                self.countPiece[piece[1]] -= 1
+            if move.pawnPromotion and move.promotedPiece is not None:
+                self.countPiece[move.promotedPiece[1]] -= 1
                 self.countPiece['p'] += 1
             # Trả lại trạng thái nhập thành
             self.castleRightsLog.pop() 
@@ -608,7 +611,7 @@ class Move():
                   "e":4,"f":5,"g":6,"h":7}
     colsToFiles = {v: k for k, v in filesToCols.items()}
     
-    def __init__(self, startSq, endSq, board, enPassant = False, castle = False):
+    def __init__(self, startSq, endSq, board, enPassant = False, castle = False, promotedPiece = None):
         self.startRow = startSq[0]
         self.startCol = startSq[1]
         self.endRow = endSq[0]
@@ -620,8 +623,13 @@ class Move():
         self.enPassant = enPassant
         self.castle = castle
         self.moveID = self.startRow * 1000 + self.startCol * 100 + self.endRow * 10 + self.endCol
+        
         if self.enPassant:
             self.pieceCaptured = 'bp' if self.pieceMoved[0] == 'w' else 'wp'
+
+        # Lựa chọn cho AI
+        if self.pawnPromotion:
+            self.promotedPiece = self.pieceMoved[0] + 'Q' or 'R' or 'N' or 'B'
 
     def create_none():
         return None

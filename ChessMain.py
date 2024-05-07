@@ -5,7 +5,7 @@
 # thay đổi cách đánh dấu nước đi hợp lệ
 # 3. (xong)
 # đánh số và chữ cho ô
-# 4. 
+# 4. (xong)
 # giao diện chọn số người chơi
 # 5.(xong)
 # co hình ảnh
@@ -198,10 +198,12 @@ def main():
                                                 pP = ['Q','R','B','N','Q','R','B','N']
                                                 if validMoves[i].pieceMoved == 'wp' and \
                                                  0 <= r < 4 and c == validMoves[i].endCol:
-                                                    gs.makeMove(validMoves[i], promotedPiece = 'w' + pP[r])
+                                                    validMoves[i].promotedPiece = 'w' + pP[r]
+                                                    gs.makeMove(validMoves[i])
                                                 elif validMoves[i].pieceMoved == 'bp' and \
                                                  4 <= r < 8 and c == validMoves[i].endCol:
-                                                    gs.makeMove(validMoves[i], promotedPiece= 'b' + pP[r])
+                                                    validMoves[i].promotedPiece = 'b' + pP[r]
+                                                    gs.makeMove(validMoves[i])
                                                 choosePP = False
                                 moveMade = True
                                 animate = True
