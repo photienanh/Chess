@@ -34,6 +34,7 @@ def loadImages():
 
 # Xử lý dữ liệu đầu vào của người dùng và cập nhật đồ họa
 def main():
+    global playerOne, playerTwo
     p.init() # Tạo môi trường để sd chức năng của Pygame
     screen = p.display.set_mode((WIDTH, HEIGHT)) # Hiển thị cửa số có kích thước WxH
     clock = p.time.Clock()
@@ -43,7 +44,7 @@ def main():
     moveMade = False
     animate = False
     loadImages()
-    running = True
+    running = False
     choosePlayer = True
     # Nếu không có ô vuông nào chọn, xử lý lần nhấp chuột cuối cùng (tuple: (col, row))
     sqSelected = ()
@@ -51,43 +52,96 @@ def main():
     playerClicks = []
     gameOver = False
     choosePP = False
+    onePlayer = False
 
-    # while choosePlayer:
-    #     screen.fill(p.Color("white"))
+    while choosePlayer:
+        drawBoard(screen)
+        drawAlphabetNumber(screen)
+        drawPieces(screen, gs.board)
+
+        # Vẽ nút để chọn số người chơi
+        # 1 người chơi
+        onePlayerButton = p.Rect(WIDTH / 2 - 200 / 2, HEIGHT / 2 - 50, 200, 50)
+        p.draw.rect(screen, '#458B00', onePlayerButton)
+        border_width = 1
+        p.draw.rect(screen, p.Color('black'), onePlayerButton, border_width)
         
-    #     # Vẽ nút hoặc ô để chọn số người chơi
-    #     # Ví dụ: 1 người chơi
-    #     player1_button = p.Rect(50, 50, 200, 50)
-    #     p.draw.rect(screen, (0, 255, 0), player1_button)
+        # 2 người chơi
+        twoPlayerButton = p.Rect(WIDTH / 2 - 200 / 2, HEIGHT / 2 + 50, 200, 50)
+        p.draw.rect(screen, '#458B00', twoPlayerButton)
+        border_width = 1
+        p.draw.rect(screen, p.Color('black'), twoPlayerButton, border_width)
         
-    #     # Ví dụ: 2 người chơi
-    #     player2_button = p.Rect(50, 150, 200, 50)
-    #     p.draw.rect(screen, (255, 0, 0), player2_button)
+        # Hiển thị văn bản trên nút
+        font = p.font.SysFont('Calibri', 30, True, False)
+        textOP = font.render('One Player', True, '#7CFC00')
+        textTP = font.render('Two Player', True, '#7CFC00')
+        screen.blit(textOP, (WIDTH / 2 - onePlayerButton.x / 2 + 10, onePlayerButton.y + 50 * 1/4))
+        screen.blit(textTP, (WIDTH / 2 - twoPlayerButton.x / 2 + 10, twoPlayerButton.y + 50 * 1/4))
         
-    #     # Hiển thị văn bản trên nút
-    #     font = p.font.SysFont(None, 30)
-    #     text1 = font.render('1 Người chơi', True, (255, 255, 255))
-    #     text2 = font.render('2 Người chơi', True, (255, 255, 255))
-    #     screen.blit(text1, (player1_button.x + 50, player1_button.y + 10))
-    #     screen.blit(text2, (player2_button.x + 50, player2_button.y + 10))
+        p.display.flip()
         
-    #     p.display.flip()
+        for e in p.event.get():
+            if e.type == p.QUIT:
+                running = False
+                p.quit()
+            elif e.type == p.MOUSEBUTTONDOWN:
+                mouse_pos = e.pos
+                # Kiểm tra xem người chơi đã nhấp vào nút nào
+                if onePlayerButton.collidepoint(mouse_pos):
+                    onePlayer = True
+                    choosePlayer = False
+
+                elif twoPlayerButton.collidepoint(mouse_pos):
+                    playerOne = True
+                    playerTwo = True
+                    running = True
+                    onePlayer = False
+                    choosePlayer = False
+    
+    while onePlayer:
+        drawBoard(screen)
+        drawAlphabetNumber(screen)
+        drawPieces(screen, gs.board)
+
+        # Vẽ ô để chọn màu 1 người chơi
+        # Màu trắng
+        playerWhite = p.Rect(WIDTH / 2 - 200 / 2, HEIGHT / 2 - 50, 200, 50)
+        p.draw.rect(screen, '#006400', playerWhite)
+        border_width = 1
+        p.draw.rect(screen, p.Color('black'), playerWhite, border_width)
+
+        # Màu đen
+        playerBlack = p.Rect(WIDTH / 2 - 200 / 2, HEIGHT / 2 + 50, 200, 50)
+        p.draw.rect(screen, '#006400', playerBlack)
+        border_width = 1
+        p.draw.rect(screen, p.Color('black'), playerBlack, border_width)
+
+        # Chèn thêm chữ lên ô
+        font = p.font.SysFont('Calibri', 30, True, False)
+        textW = font.render('White', True, 'white')
+        textB = font.render('Black', True, 'black')
+        screen.blit(textW, (WIDTH / 2 - textW.get_width() / 2, HEIGHT / 2 - textW.get_height() / 2 - 50 / 2))
+        screen.blit(textB, (WIDTH / 2 - textB.get_width() / 2, HEIGHT / 2 - textB.get_height() / 2 + 75))
+
+        p.display.flip()
         
-    #     for event in p.event.get():
-    #         if event.type == p.QUIT:
-    #             running = False
-    #             p.quit()
-    #         elif event.type == p.MOUSEBUTTONDOWN:
-    #             mouse_pos = event.pos
-    #             # Kiểm tra xem người chơi đã nhấp vào nút nào
-    #             if player1_button.collidepoint(mouse_pos):
-    #                 playerOne = True
-    #                 playerTwo = False
-    #                 running = False
-    #             elif player2_button.collidepoint(mouse_pos):
-    #                 playerOne = True
-    #                 playerTwo = True
-    #                 running = False
+        for e in p.event.get():
+            if e.type == p.QUIT:
+                running = False
+                p.quit()
+            elif e.type == p.MOUSEBUTTONDOWN:
+                chooseColor = e.pos
+                if playerWhite.collidepoint(chooseColor):
+                    playerOne = True
+                    playerTwo = False
+                    running = True
+                    onePlayer = False
+                elif playerBlack.collidepoint(chooseColor):
+                    playerOne = False
+                    playerTwo = True
+                    running = True
+                    onePlayer = False
 
     while running:
         humanTurn = (gs.whiteToMove and playerOne) or (not gs.whiteToMove and playerTwo)
@@ -122,7 +176,6 @@ def main():
                                     choosePP = True
                                     while choosePP:
                                         drawPromotionOptions(screen, validMoves[i])
-                                        p.display.flip()  # Cập nhật cửa sổ để hiển thị cửa sổ nhỏ mới
                                         for e in p.event.get():
                                             if e.type == p.MOUSEBUTTONDOWN:
                                                 # Xác định quân cờ được chọn
@@ -290,6 +343,7 @@ def drawPromotionOptions(screen, location):
     for i, piece in enumerate(promotionOptions):
         image = IMAGES[location.pieceMoved[0] + piece]
         screen.blit(image, p.Rect(locationOptionCol * SQ_SIZE + SQ_SIZE / 2 - image.get_width() / 2, locationOptionRow * SQ_SIZE + SQ_SIZE / 2 - image.get_height() / 2 + (i * SQ_SIZE), SQ_SIZE, SQ_SIZE))
+    p.display.flip()
 
 # Hoạt ảnh di chuyển
 def animateMove(move, screen, gs, clock):
@@ -304,7 +358,6 @@ def animateMove(move, screen, gs, clock):
         
         # Vẽ lại bàn cờ
         drawBoard(screen)
-        drawAlphabetNumber(screen)
         drawPieces(screen, gs.board)
         
         # Vẽ màu lên ô cuối cùng khi di chuyển
@@ -325,6 +378,8 @@ def animateMove(move, screen, gs, clock):
             imageM = IMAGES[move.pieceMoved]
             screen.blit(imageM, p.Rect(c * SQ_SIZE + SQ_SIZE / 2 - imageM.get_width() / 2, r * SQ_SIZE + SQ_SIZE / 2 - imageM.get_height() / 2, SQ_SIZE, SQ_SIZE))
         
+        drawAlphabetNumber(screen)
+
         # Cập nhật hình ảnh
         p.display.flip()
         # Số khung hình mỗi giây
