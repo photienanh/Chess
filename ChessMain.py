@@ -1,19 +1,3 @@
-# Chưa làm
-# 1. (xong)
-# đánh dấu nước đã đi
-# 2. (xong)
-# thay đổi cách đánh dấu nước đi hợp lệ
-# 3. (xong)
-# đánh số và chữ cho ô
-# 4. 
-# giao diện chọn số người chơi
-# 5.(xong)
-# co hình ảnh
-
-# Lỗi
-# 1.(xong)
-# undoMove tốt đi 2 nước k hiển thị lại hình ảnh
-
 import pygame as p
 import ChessEngine, SmartMoveFinder
 
