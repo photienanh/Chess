@@ -36,6 +36,7 @@
 # 7. (xong)
 # AI không phong hậu
 
+# Engine cho game cờ vua
 class GameState():
     def __init__(self):
         self.board = [
