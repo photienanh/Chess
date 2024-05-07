@@ -62,20 +62,20 @@ def main():
         # Vẽ nút để chọn số người chơi
         # 1 người chơi
         onePlayerButton = p.Rect(WIDTH / 2 - 200 / 2, HEIGHT / 2 - 50, 200, 50)
-        p.draw.rect(screen, '#458B00', onePlayerButton)
+        p.draw.rect(screen, '#B3EE3A', onePlayerButton)
         border_width = 1
         p.draw.rect(screen, p.Color('black'), onePlayerButton, border_width)
         
         # 2 người chơi
         twoPlayerButton = p.Rect(WIDTH / 2 - 200 / 2, HEIGHT / 2 + 50, 200, 50)
-        p.draw.rect(screen, '#458B00', twoPlayerButton)
+        p.draw.rect(screen, '#B3EE3A', twoPlayerButton)
         border_width = 1
         p.draw.rect(screen, p.Color('black'), twoPlayerButton, border_width)
         
         # Hiển thị văn bản trên nút
         font = p.font.SysFont('Calibri', 30, True, False)
-        textOP = font.render('One Player', True, '#7CFC00')
-        textTP = font.render('Two Player', True, '#7CFC00')
+        textOP = font.render('One Player', True, '#006400')
+        textTP = font.render('Two Player', True, '#006400')
         screen.blit(textOP, (WIDTH / 2 - onePlayerButton.x / 2 + 10, onePlayerButton.y + 50 * 1/4))
         screen.blit(textTP, (WIDTH / 2 - twoPlayerButton.x / 2 + 10, twoPlayerButton.y + 50 * 1/4))
         
@@ -83,8 +83,7 @@ def main():
         
         for e in p.event.get():
             if e.type == p.QUIT:
-                running = False
-                p.quit()
+                choosePlayer = False
             elif e.type == p.MOUSEBUTTONDOWN:
                 mouse_pos = e.pos
                 # Kiểm tra xem người chơi đã nhấp vào nút nào
@@ -100,20 +99,16 @@ def main():
                     choosePlayer = False
     
     while onePlayer:
-        drawBoard(screen)
-        drawAlphabetNumber(screen)
-        drawPieces(screen, gs.board)
-
         # Vẽ ô để chọn màu 1 người chơi
         # Màu trắng
         playerWhite = p.Rect(WIDTH / 2 - 200 / 2, HEIGHT / 2 - 50, 200, 50)
-        p.draw.rect(screen, '#006400', playerWhite)
+        p.draw.rect(screen, '#B3EE3A', playerWhite)
         border_width = 1
         p.draw.rect(screen, p.Color('black'), playerWhite, border_width)
 
         # Màu đen
         playerBlack = p.Rect(WIDTH / 2 - 200 / 2, HEIGHT / 2 + 50, 200, 50)
-        p.draw.rect(screen, '#006400', playerBlack)
+        p.draw.rect(screen, '#B3EE3A', playerBlack)
         border_width = 1
         p.draw.rect(screen, p.Color('black'), playerBlack, border_width)
 
@@ -128,8 +123,7 @@ def main():
         
         for e in p.event.get():
             if e.type == p.QUIT:
-                running = False
-                p.quit()
+                onePlayer = False
             elif e.type == p.MOUSEBUTTONDOWN:
                 chooseColor = e.pos
                 if playerWhite.collidepoint(chooseColor):
