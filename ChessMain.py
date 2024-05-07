@@ -7,8 +7,8 @@ SQ_SIZE = HEIGHT // DIMENSION # Kích thước mỗi ô trên bàn cờ
 MAX_FPS = 15 # Số lần lặp trên 1 giây để cập nhật trạng thái trò chơi
 IMAGES = {}
 
-playerOne = True # True = playerTurn = whiteTurn
-playerTwo = True
+playerOne = False # True = playerTurn = whiteTurn
+playerTwo = False
 
 # Khởi tạo từ điển của các ảnh
 def loadImages():
@@ -18,6 +18,7 @@ def loadImages():
 
 # Xử lý dữ liệu đầu vào của người dùng và cập nhật đồ họa
 def main():
+    global playerOne, playerTwo
     p.init() # Tạo môi trường để sd chức năng của Pygame
     screen = p.display.set_mode((WIDTH, HEIGHT)) # Hiển thị cửa số có kích thước WxH
     clock = p.time.Clock()
@@ -27,13 +28,117 @@ def main():
     moveMade = False
     animate = False
     loadImages()
-    running = True
+    running = False
+    choosePlayer = True
     # Nếu không có ô vuông nào chọn, xử lý lần nhấp chuột cuối cùng (tuple: (col, row))
     sqSelected = ()
     # Lưu lại các lần nhấp chuột
     playerClicks = []
     gameOver = False
     choosePP = False
+    onePlayer = False
+
+    while choosePlayer:
+        drawBoard(screen)
+        drawAlphabetNumber(screen)
+        drawPieces(screen, gs.board)
+
+        # Vẽ nút để chọn số người chơi
+        # máy  chơi
+        AIPlay = p.Rect(WIDTH / 2 - 200 / 2, HEIGHT / 2 - 100, 200, 50)
+        p.draw.rect(screen, '#B3EE3A', AIPlay)
+        border_width = 1
+        p.draw.rect(screen, p.Color('black'), AIPlay, border_width)
+
+        # 1 người chơi
+        onePlayerButton = p.Rect(WIDTH / 2 - 200 / 2, HEIGHT / 2 - 25, 200, 50)
+        p.draw.rect(screen, '#B3EE3A', onePlayerButton)
+        border_width = 1
+        p.draw.rect(screen, p.Color('black'), onePlayerButton, border_width)
+        
+        # 2 người chơi
+        twoPlayerButton = p.Rect(WIDTH / 2 - 200 / 2, HEIGHT / 2 + 50, 200, 50)
+        p.draw.rect(screen, '#B3EE3A', twoPlayerButton)
+        border_width = 1
+        p.draw.rect(screen, p.Color('black'), twoPlayerButton, border_width)
+        
+        # Hiển thị văn bản trên nút
+        font = p.font.SysFont('Calibri', 30, True, False)
+        textAI = font.render('AI Play', True, '#006400')
+        textOP = font.render('One Player', True, '#006400')
+        textTP = font.render('Two Player', True, '#006400')
+        screen.blit(textAI, (WIDTH / 2 - textAI.get_width() / 2, HEIGHT / 2 - textAI.get_height() / 2 - 75))
+        screen.blit(textOP, (WIDTH / 2 - textOP.get_width() / 2, HEIGHT / 2 - textOP.get_height() / 2))
+        screen.blit(textTP, (WIDTH / 2 - textTP.get_width() / 2, HEIGHT / 2 - textTP.get_height() / 2 + 75))
+        
+        p.display.flip()
+        
+        for e in p.event.get():
+            if e.type == p.QUIT:
+                choosePlayer = False
+
+            elif e.type == p.MOUSEBUTTONDOWN:
+                mouse_pos = e.pos
+                # Kiểm tra xem người chơi đã nhấp vào nút nào
+                if AIPlay.collidepoint(mouse_pos):
+                    playerOne = False
+                    playerTwo = False
+                    running = True
+                    onePlayer = False
+                    choosePlayer = False
+
+                elif onePlayerButton.collidepoint(mouse_pos):
+                    onePlayer = True
+                    choosePlayer = False
+
+                elif twoPlayerButton.collidepoint(mouse_pos):
+                    playerOne = True
+                    playerTwo = True
+                    running = True
+                    onePlayer = False
+                    choosePlayer = False
+    
+    while onePlayer:
+        drawBoard(screen)
+        drawAlphabetNumber(screen)
+        drawPieces(screen, gs.board)
+        # Vẽ ô để chọn màu 1 người chơi
+        # Màu trắng
+        playerWhite = p.Rect(WIDTH / 2 - 200 / 2, HEIGHT / 2 - 75, 200, 50)
+        p.draw.rect(screen, '#B3EE3A', playerWhite)
+        border_width = 1
+        p.draw.rect(screen, p.Color('black'), playerWhite, border_width)
+
+        # Màu đen
+        playerBlack = p.Rect(WIDTH / 2 - 200 / 2, HEIGHT / 2 + 25, 200, 50)
+        p.draw.rect(screen, '#B3EE3A', playerBlack)
+        border_width = 1
+        p.draw.rect(screen, p.Color('black'), playerBlack, border_width)
+
+        # Chèn thêm chữ lên ô
+        font = p.font.SysFont('Calibri', 30, True, False)
+        textW = font.render('White', True, 'white')
+        textB = font.render('Black', True, 'black')
+        screen.blit(textW, (WIDTH / 2 - textW.get_width() / 2, HEIGHT / 2 - textW.get_height() / 2 - 50))
+        screen.blit(textB, (WIDTH / 2 - textB.get_width() / 2, HEIGHT / 2 - textB.get_height() / 2 + 50))
+
+        p.display.flip()
+        
+        for e in p.event.get():
+            if e.type == p.QUIT:
+                onePlayer = False
+            elif e.type == p.MOUSEBUTTONDOWN:
+                chooseColor = e.pos
+                if playerWhite.collidepoint(chooseColor):
+                    playerOne = True
+                    playerTwo = False
+                    running = True
+                    onePlayer = False
+                elif playerBlack.collidepoint(chooseColor):
+                    playerOne = False
+                    playerTwo = True
+                    running = True
+                    onePlayer = False
 
     while running:
         humanTurn = (gs.whiteToMove and playerOne) or (not gs.whiteToMove and playerTwo)
@@ -68,7 +173,6 @@ def main():
                                     choosePP = True
                                     while choosePP:
                                         drawPromotionOptions(screen, validMoves[i])
-                                        p.display.flip()  # Cập nhật cửa sổ để hiển thị cửa sổ nhỏ mới
                                         for e in p.event.get():
                                             if e.type == p.MOUSEBUTTONDOWN:
                                                 # Xác định quân cờ được chọn
@@ -212,7 +316,7 @@ def drawPieces(screen, board):
     for r in range(DIMENSION):
         for c in range(DIMENSION):
             piece = board[r][c]
-            if piece != "--":
+            if piece != "--" and piece is not None:
                 image = IMAGES[piece]
                 screen.blit(image, p.Rect(c * SQ_SIZE + SQ_SIZE / 2 - image.get_width() / 2,r * SQ_SIZE + SQ_SIZE / 2 - image.get_height() / 2, SQ_SIZE, SQ_SIZE))
 
@@ -236,6 +340,7 @@ def drawPromotionOptions(screen, location):
     for i, piece in enumerate(promotionOptions):
         image = IMAGES[location.pieceMoved[0] + piece]
         screen.blit(image, p.Rect(locationOptionCol * SQ_SIZE + SQ_SIZE / 2 - image.get_width() / 2, locationOptionRow * SQ_SIZE + SQ_SIZE / 2 - image.get_height() / 2 + (i * SQ_SIZE), SQ_SIZE, SQ_SIZE))
+    p.display.flip()
 
 # Hoạt ảnh di chuyển
 def animateMove(move, screen, gs, clock):
@@ -250,7 +355,6 @@ def animateMove(move, screen, gs, clock):
         
         # Vẽ lại bàn cờ
         drawBoard(screen)
-        drawAlphabetNumber(screen)
         drawPieces(screen, gs.board)
         
         # Vẽ màu lên ô cuối cùng khi di chuyển
@@ -261,13 +365,18 @@ def animateMove(move, screen, gs, clock):
         # Nếu ô cuối cùng là quân thì vẽ quân
         if move.pieceCaptured != '--':
             imageC = IMAGES[move.pieceCaptured]
-            screen.blit(imageC, p.Rect(move.endCol * SQ_SIZE + SQ_SIZE / 2 - imageC.get_width() / 2, move.endRow * SQ_SIZE + SQ_SIZE / 2 - imageC.get_height() / 2, SQ_SIZE, SQ_SIZE))
+            if move.enPassant:
+                screen.blit(imageC, p.Rect(move.endCol * SQ_SIZE + SQ_SIZE / 2 - imageC.get_width() / 2, move.startRow * SQ_SIZE + SQ_SIZE / 2 - imageC.get_height() / 2, SQ_SIZE, SQ_SIZE))
+            else:
+                screen.blit(imageC, p.Rect(move.endCol * SQ_SIZE + SQ_SIZE / 2 - imageC.get_width() / 2, move.endRow * SQ_SIZE + SQ_SIZE / 2 - imageC.get_height() / 2, SQ_SIZE, SQ_SIZE))
 
         # Nếu ô bắt đầu là quân thì vẽ quân
         if move.pieceMoved != '--':
             imageM = IMAGES[move.pieceMoved]
             screen.blit(imageM, p.Rect(c * SQ_SIZE + SQ_SIZE / 2 - imageM.get_width() / 2, r * SQ_SIZE + SQ_SIZE / 2 - imageM.get_height() / 2, SQ_SIZE, SQ_SIZE))
         
+        drawAlphabetNumber(screen)
+
         # Cập nhật hình ảnh
         p.display.flip()
         # Số khung hình mỗi giây
