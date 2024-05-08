@@ -25,6 +25,9 @@ IMAGES = {}
 
 playerOne = False # True = playerTurn = whiteTurn
 playerTwo = False
+running = False
+onePlayer = False
+choosePlayer = True
 
 # Khởi tạo từ điển của các ảnh
 def loadImages():
@@ -34,7 +37,7 @@ def loadImages():
 
 # Xử lý dữ liệu đầu vào của người dùng và cập nhật đồ họa
 def main():
-    global playerOne, playerTwo
+    global playerOne, playerTwo, running, onePlayer, choosePlayer
     p.init() # Tạo môi trường để sd chức năng của Pygame
     screen = p.display.set_mode((WIDTH, HEIGHT)) # Hiển thị cửa số có kích thước WxH
     clock = p.time.Clock()
@@ -44,117 +47,78 @@ def main():
     moveMade = False
     animate = False
     loadImages()
-    running = False
-    choosePlayer = True
     # Nếu không có ô vuông nào chọn, xử lý lần nhấp chuột cuối cùng (tuple: (col, row))
     sqSelected = ()
     # Lưu lại các lần nhấp chuột
     playerClicks = []
     gameOver = False
     choosePP = False
-    onePlayer = False
 
-    while choosePlayer:
+    buttons = [
+        {
+            'rect': p.Rect(WIDTH / 2 - 200 / 2, HEIGHT / 2 - 100, 200, 50), # Vẽ hình chữ nhật
+            'text': 'AI Play', # Văn bản
+            'textColor': '#006400', # Màu văn bản
+            'buttonColor': '#B3EE3A', # Màu hình chữ nhật
+            'borderColor': 'black', # Màu viền ô
+            'action': {'playerOne': False, 'playerTwo': False, 'running': True, 'onePlayer': False, 'choosePlayer': False}
+        },
+        {
+            'rect': p.Rect(WIDTH / 2 - 200 / 2, HEIGHT / 2 - 25, 200, 50),
+            'text': 'One Player',
+            'textColor': '#006400',
+            'buttonColor': '#B3EE3A',
+            'borderColor': 'black',
+            'action': {'playerOne': True, 'playerTwo': False, 'running': True, 'onePlayer': True, 'choosePlayer': False}
+        },
+        {
+            'rect': p.Rect(WIDTH / 2 - 200 / 2, HEIGHT / 2 + 50, 200, 50),
+            'text': 'Two Player',
+            'textColor': '#006400',
+            'buttonColor': '#B3EE3A',
+            'borderColor': 'black',
+            'action': {'playerOne': True, 'playerTwo': True, 'running': True, 'onePlayer': False, 'choosePlayer': False}
+        },
+        {
+            'rect': p.Rect(WIDTH / 2 - 200 / 2, HEIGHT / 2 - 75, 200, 50),
+            'text': 'White',
+            'textColor': 'white',
+            'buttonColor': '#B3EE3A',
+            'borderColor': 'black',
+            'action': {'playerOne': True, 'playerTwo': False, 'running': True, 'onePlayer': False, 'choosePlayer': False}
+        },
+        {
+            'rect': p.Rect(WIDTH / 2 - 200 / 2, HEIGHT / 2 + 25, 200, 50),
+            'text': 'Black',
+            'textColor': 'black',
+            'buttonColor': '#B3EE3A',
+            'borderColor': 'black',
+            'action': {'playerOne': False, 'playerTwo': True, 'running': True, 'onePlayer': False, 'choosePlayer': False}
+        }
+    ]
+
+    while choosePlayer or onePlayer:
         drawBoard(screen)
         drawAlphabetNumber(screen)
         drawPieces(screen, gs.board)
 
-        # Vẽ nút để chọn số người chơi
-        # máy  chơi
-        AIPlay = p.Rect(WIDTH / 2 - 200 / 2, HEIGHT / 2 - 100, 200, 50)
-        p.draw.rect(screen, '#B3EE3A', AIPlay)
-        border_width = 1
-        p.draw.rect(screen, p.Color('black'), AIPlay, border_width)
+        ranges = []
+        if onePlayer:
+            ranges = range(3, 5)
+        else:
+            ranges = range(3)
 
-        # 1 người chơi
-        onePlayerButton = p.Rect(WIDTH / 2 - 200 / 2, HEIGHT / 2 - 25, 200, 50)
-        p.draw.rect(screen, '#B3EE3A', onePlayerButton)
-        border_width = 1
-        p.draw.rect(screen, p.Color('black'), onePlayerButton, border_width)
-        
-        # 2 người chơi
-        twoPlayerButton = p.Rect(WIDTH / 2 - 200 / 2, HEIGHT / 2 + 50, 200, 50)
-        p.draw.rect(screen, '#B3EE3A', twoPlayerButton)
-        border_width = 1
-        p.draw.rect(screen, p.Color('black'), twoPlayerButton, border_width)
-        
-        # Hiển thị văn bản trên nút
-        font = p.font.SysFont('Calibri', 30, True, False)
-        textAI = font.render('AI Play', True, '#006400')
-        textOP = font.render('One Player', True, '#006400')
-        textTP = font.render('Two Player', True, '#006400')
-        screen.blit(textAI, (WIDTH / 2 - textAI.get_width() / 2, HEIGHT / 2 - textAI.get_height() / 2 - 75))
-        screen.blit(textOP, (WIDTH / 2 - textOP.get_width() / 2, HEIGHT / 2 - textOP.get_height() / 2))
-        screen.blit(textTP, (WIDTH / 2 - textTP.get_width() / 2, HEIGHT / 2 - textTP.get_height() / 2 + 75))
-        
+        for i in ranges:
+            button = buttons[i]
+            drawButton(screen, button['rect'], button['text'], button['textColor'], button['buttonColor'], button['borderColor'])
         p.display.flip()
-        
+
         for e in p.event.get():
             if e.type == p.QUIT:
                 choosePlayer = False
-
             elif e.type == p.MOUSEBUTTONDOWN:
                 mouse_pos = e.pos
-                # Kiểm tra xem người chơi đã nhấp vào nút nào
-                if AIPlay.collidepoint(mouse_pos):
-                    playerOne = False
-                    playerTwo = False
-                    running = True
-                    onePlayer = False
-                    choosePlayer = False
-
-                elif onePlayerButton.collidepoint(mouse_pos):
-                    onePlayer = True
-                    choosePlayer = False
-
-                elif twoPlayerButton.collidepoint(mouse_pos):
-                    playerOne = True
-                    playerTwo = True
-                    running = True
-                    onePlayer = False
-                    choosePlayer = False
-    
-    while onePlayer:
-        drawBoard(screen)
-        drawAlphabetNumber(screen)
-        drawPieces(screen, gs.board)
-        # Vẽ ô để chọn màu 1 người chơi
-        # Màu trắng
-        playerWhite = p.Rect(WIDTH / 2 - 200 / 2, HEIGHT / 2 - 75, 200, 50)
-        p.draw.rect(screen, '#B3EE3A', playerWhite)
-        border_width = 1
-        p.draw.rect(screen, p.Color('black'), playerWhite, border_width)
-
-        # Màu đen
-        playerBlack = p.Rect(WIDTH / 2 - 200 / 2, HEIGHT / 2 + 25, 200, 50)
-        p.draw.rect(screen, '#B3EE3A', playerBlack)
-        border_width = 1
-        p.draw.rect(screen, p.Color('black'), playerBlack, border_width)
-
-        # Chèn thêm chữ lên ô
-        font = p.font.SysFont('Calibri', 30, True, False)
-        textW = font.render('White', True, 'white')
-        textB = font.render('Black', True, 'black')
-        screen.blit(textW, (WIDTH / 2 - textW.get_width() / 2, HEIGHT / 2 - textW.get_height() / 2 - 50))
-        screen.blit(textB, (WIDTH / 2 - textB.get_width() / 2, HEIGHT / 2 - textB.get_height() / 2 + 50))
-
-        p.display.flip()
-        
-        for e in p.event.get():
-            if e.type == p.QUIT:
-                onePlayer = False
-            elif e.type == p.MOUSEBUTTONDOWN:
-                chooseColor = e.pos
-                if playerWhite.collidepoint(chooseColor):
-                    playerOne = True
-                    playerTwo = False
-                    running = True
-                    onePlayer = False
-                elif playerBlack.collidepoint(chooseColor):
-                    playerOne = False
-                    playerTwo = True
-                    running = True
-                    onePlayer = False
+                handleButtonClick(mouse_pos, buttons)
 
     while running:
         humanTurn = (gs.whiteToMove and playerOne) or (not gs.whiteToMove and playerTwo)
@@ -260,6 +224,22 @@ def main():
             drawText(screen, 'Draw.', '#A9A9A9')
         clock.tick(MAX_FPS)
         p.display.flip()
+
+def drawButton(screen, rect, text, textColor, buttonColor, borderColor):
+        p.draw.rect(screen, buttonColor, rect)
+        border_width = 1
+        p.draw.rect(screen, borderColor, rect, border_width)
+        font = p.font.SysFont('Calibri', 30, True, False)
+        textSurface = font.render(text, True, textColor)
+        textRect = textSurface.get_rect(center=rect.center)
+        screen.blit(textSurface, textRect)
+
+def handleButtonClick(mouse_pos, buttons):
+    for button in buttons:
+        if button['rect'].collidepoint(mouse_pos):
+            for key, value in button['action'].items():
+                if key in globals():
+                    globals()[key] = value
 
 # Chịu trách nhiệm về tất cả đồ họa trong trạng thái trò chơi hiện tại
 def drawGameState(screen, gs, validMoves, sqSelected):
