@@ -92,9 +92,9 @@ def main():
             'text': 'White',
             'textColor': 'white',
             'textColorDown': 'black',
-            'buttonColor': '#B3EE3A',
+            'buttonColor': 'black',
             'buttonColorDown': 'white',
-            'borderColor': 'black',
+            'borderColor': 'white',
             'action': {'playerOne': True, 'playerTwo': False, 'running': True, 'onePlayer': False, 'choosePlayer': False}
         },
         {
@@ -102,7 +102,7 @@ def main():
             'text': 'Black',
             'textColor': 'black',
             'textColorDown': 'white',
-            'buttonColor': '#B3EE3A',
+            'buttonColor': 'white',
             'buttonColorDown': 'black',
             'borderColor': 'black',
             'action': {'playerOne': False, 'playerTwo': True, 'running': True, 'onePlayer': False, 'choosePlayer': False}
