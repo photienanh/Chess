@@ -17,31 +17,33 @@
 import pygame as p
 import ChessEngine, SmartMoveFinder
 
-WIDTH = HEIGHT = 512 # Kích thước cửa sổ
-DIMENSION = 8 # Kích thước bảng cờ vua 8x8 ô
-SQ_SIZE = HEIGHT // DIMENSION # Kích thước mỗi ô trên bàn cờ
-MAX_FPS = 15 # Số lần lặp trên 1 giây để cập nhật trạng thái trò chơi
+WIDTH = HEIGHT = 512  # Kích thước cửa sổ
+DIMENSION = 8  # Kích thước bảng cờ vua 8x8 ô
+SQ_SIZE = HEIGHT // DIMENSION  # Kích thước mỗi ô trên bàn cờ
+MAX_FPS = 15  # Số lần lặp trên 1 giây để cập nhật trạng thái trò chơi
 IMAGES = {}
 
-playerOne = False # True = playerTurn = whiteTurn
+playerOne = False  # True = playerTurn = whiteTurn
 playerTwo = False
 running = False
 onePlayer = False
 choosePlayer = True
 
+
 # Khởi tạo từ điển của các ảnh
 def loadImages():
     pieces = ['wp', 'wR', 'wN', 'wB', 'wK', 'wQ', 'bp', 'bR', 'bN', 'bB', 'bK', 'bQ']
     for piece in pieces:
-        IMAGES[piece] = p.transform.scale(p.image.load("images/" + piece + ".png"), (50, 50))
+        IMAGES[piece] = p.transform.scale(p.image.load("D:/Chess/images/" + piece + ".png"), (50, 50))
+
 
 # Xử lý dữ liệu đầu vào của người dùng và cập nhật đồ họa
 def main():
     global playerOne, playerTwo, running, onePlayer, choosePlayer
-    p.init() # Tạo môi trường để sd chức năng của Pygame
-    screen = p.display.set_mode((WIDTH, HEIGHT)) # Hiển thị cửa số có kích thước WxH
+    p.init()  # Tạo môi trường để sd chức năng của Pygame
+    screen = p.display.set_mode((WIDTH, HEIGHT))  # Hiển thị cửa số có kích thước WxH
     clock = p.time.Clock()
-    screen.fill(p.Color("white")) # Vẽ cửa sổ màu trắng
+    screen.fill(p.Color("white"))  # Vẽ cửa sổ màu trắng
     gs = ChessEngine.GameState()
     validMoves = gs.getValidMoves()
     moveMade = False
@@ -58,14 +60,15 @@ def main():
 
     buttons = [
         {
-            'rect': p.Rect(WIDTH / 2 - 200 / 2, HEIGHT / 2 - 100, 200, 50), # Vẽ hình chữ nhật
-            'text': 'AI Play', # Văn bản
-            'textColor': '#006400', # Màu văn bản
+            'rect': p.Rect(WIDTH / 2 - 200 / 2, HEIGHT / 2 - 100, 200, 50),  # Vẽ hình chữ nhật
+            'text': 'AI Play',  # Văn bản
+            'textColor': '#006400',  # Màu văn bản
             'textColorDown': '#B3EE3A',
-            'buttonColor': '#B3EE3A', # Màu hình chữ nhật
+            'buttonColor': '#B3EE3A',  # Màu hình chữ nhật
             'buttonColorDown': '#006400',
-            'borderColor': 'black', # Màu viền ô
-            'action': {'playerOne': False, 'playerTwo': False, 'running': True, 'onePlayer': False, 'choosePlayer': False}
+            'borderColor': 'black',  # Màu viền ô
+            'action': {'playerOne': False, 'playerTwo': False, 'running': True, 'onePlayer': False,
+                       'choosePlayer': False}
         },
         {
             'rect': p.Rect(WIDTH / 2 - 200 / 2, HEIGHT / 2 - 25, 200, 50),
@@ -95,7 +98,8 @@ def main():
             'buttonColor': '#B3EE3A',
             'buttonColorDown': 'white',
             'borderColor': 'black',
-            'action': {'playerOne': True, 'playerTwo': False, 'running': True, 'onePlayer': False, 'choosePlayer': False}
+            'action': {'playerOne': True, 'playerTwo': False, 'running': True, 'onePlayer': False,
+                       'choosePlayer': False}
         },
         {
             'rect': p.Rect(WIDTH / 2 - 200 / 2, HEIGHT / 2 + 25, 200, 50),
@@ -105,7 +109,8 @@ def main():
             'buttonColor': '#B3EE3A',
             'buttonColorDown': 'black',
             'borderColor': 'black',
-            'action': {'playerOne': False, 'playerTwo': True, 'running': True, 'onePlayer': False, 'choosePlayer': False}
+            'action': {'playerOne': False, 'playerTwo': True, 'running': True, 'onePlayer': False,
+                       'choosePlayer': False}
         }
     ]
 
@@ -123,10 +128,12 @@ def main():
 
         for i in ranges:
             button = buttons[i]
-            drawButton(screen, button['rect'], button['text'], button['textColor'], button['buttonColor'], button['borderColor'])
-        
+            drawButton(screen, button['rect'], button['text'], button['textColor'], button['buttonColor'],
+                       button['borderColor'])
+
         if mousePressed and buttonPressed is not None:
-            drawButtonDown(screen, buttonPressed['rect'], buttonPressed['text'], buttonPressed['textColorDown'], buttonPressed['buttonColorDown'], buttonPressed['borderColor'])
+            drawButtonDown(screen, buttonPressed['rect'], buttonPressed['text'], buttonPressed['textColorDown'],
+                           buttonPressed['buttonColorDown'], buttonPressed['borderColor'])
 
         p.display.flip()
 
@@ -149,17 +156,16 @@ def main():
                 buttonPressed = None
                 mousePressed = False
 
-
     while running:
         humanTurn = (gs.whiteToMove and playerOne) or (not gs.whiteToMove and playerTwo)
         for e in p.event.get():
             if e.type == p.QUIT:
-                running = False 
-            # Xử lý chuột
+                running = False
+                # Xử lý chuột
             elif e.type == p.MOUSEBUTTONDOWN:
                 if not gameOver and humanTurn:
                     # Lấy ra tạo độ (x,y) của chuột
-                    location = p.mouse.get_pos() 
+                    location = p.mouse.get_pos()
                     col = location[0] // SQ_SIZE
                     row = location[1] // SQ_SIZE
                     # Nếu chọn cùng 1 ô
@@ -171,7 +177,7 @@ def main():
                     else:
                         sqSelected = (row, col)
                         playerClicks.append(sqSelected)
-                    
+
                     if len(playerClicks) == 2:
                         # Tạo đối tượng move có lớp Move(điểm đầu, điểm cuối, bàn cờ)
                         move = ChessEngine.Move(playerClicks[0], playerClicks[1], gs.board)
@@ -189,13 +195,13 @@ def main():
                                                 location = p.mouse.get_pos()
                                                 c = location[0] // SQ_SIZE
                                                 r = location[1] // SQ_SIZE
-                                                pP = ['Q','R','B','N','Q','R','B','N']
+                                                pP = ['Q', 'R', 'B', 'N', 'Q', 'R', 'B', 'N']
                                                 if validMoves[i].pieceMoved == 'wp' and \
-                                                 0 <= r < 4 and c == validMoves[i].endCol:
+                                                        0 <= r < 4 and c == validMoves[i].endCol:
                                                     validMoves[i].promotedPiece = 'w' + pP[r]
                                                     gs.makeMove(validMoves[i])
                                                 elif validMoves[i].pieceMoved == 'bp' and \
-                                                 4 <= r < 8 and c == validMoves[i].endCol:
+                                                        4 <= r < 8 and c == validMoves[i].endCol:
                                                     validMoves[i].promotedPiece = 'b' + pP[r]
                                                     gs.makeMove(validMoves[i])
                                                 choosePP = False
@@ -215,7 +221,7 @@ def main():
                     moveMade = True
                     animate = False
                     gameOver = False
-                    
+
                 # Cài lại bàn cờ khi ấn 'r'
                 if e.key == p.K_r:
                     gs = ChessEngine.GameState()
@@ -228,7 +234,7 @@ def main():
 
         if not gameOver and not humanTurn:
             AIMove = SmartMoveFinder.findBestMinimaxMove(gs, validMoves)
-            if AIMove is None:  
+            if AIMove is None:
                 AIMove = SmartMoveFinder.findRandomMove(validMoves)
             gs.makeMove(AIMove)
             moveMade = True
@@ -237,7 +243,7 @@ def main():
         if moveMade:
             if animate:
                 animateMove(gs.moveLog[-1], screen, gs, clock)
-            validMoves= gs.getValidMoves()
+            validMoves = gs.getValidMoves()
             moveMade = False
             animate = False
 
@@ -255,6 +261,7 @@ def main():
         clock.tick(MAX_FPS)
         p.display.flip()
 
+
 def drawButtonDown(screen, rect, text, textColorDown, buttonColorDown, borderColor):
     p.draw.rect(screen, buttonColorDown, rect)
     border_width = 1
@@ -264,17 +271,20 @@ def drawButtonDown(screen, rect, text, textColorDown, buttonColorDown, borderCol
     textRect = textSurface.get_rect(center=rect.center)
     screen.blit(textSurface, textRect)
 
+
 def drawButton(screen, rect, text, textColor, buttonColor, borderColor):
-        p.draw.rect(screen, buttonColor, rect)
-        border_width = 1
-        p.draw.rect(screen, borderColor, rect, border_width)
-        font = p.font.SysFont('Calibri', 30, True, False)
-        textSurface = font.render(text, True, textColor)
-        textRect = textSurface.get_rect(center=rect.center)
-        screen.blit(textSurface, textRect)
+    p.draw.rect(screen, buttonColor, rect)
+    border_width = 1
+    p.draw.rect(screen, borderColor, rect, border_width)
+    font = p.font.SysFont('Calibri', 30, True, False)
+    textSurface = font.render(text, True, textColor)
+    textRect = textSurface.get_rect(center=rect.center)
+    screen.blit(textSurface, textRect)
+
 
 def handleButtonClick(mouse_pos, buttons):
     pass
+
 
 # Chịu trách nhiệm về tất cả đồ họa trong trạng thái trò chơi hiện tại
 def drawGameState(screen, gs, validMoves, sqSelected):
@@ -286,6 +296,7 @@ def drawGameState(screen, gs, validMoves, sqSelected):
     # Vẽ các quân cờ lên trên các hình vuông
     drawPieces(screen, gs.board)
 
+
 def highlightSquares(screen, gs, validMoves, sqSelected, moveLog):
     global colors
     s = p.Surface((SQ_SIZE, SQ_SIZE))
@@ -296,7 +307,7 @@ def highlightSquares(screen, gs, validMoves, sqSelected, moveLog):
     if sqSelected != ():
         r, c = sqSelected
         # sqSelected là 1 quân cờ có thể di chuyển
-        if gs.board[r][c] is not None and gs.board[r][c][0] == ('w' if gs.whiteToMove else 'b'): 
+        if gs.board[r][c] is not None and gs.board[r][c][0] == ('w' if gs.whiteToMove else 'b'):
             screen.blit(s, (c * SQ_SIZE, r * SQ_SIZE))
             for move in validMoves:
                 if move.startRow == r and move.startCol == c:
@@ -312,7 +323,7 @@ def highlightSquares(screen, gs, validMoves, sqSelected, moveLog):
                     radius = 10
                     # Vẽ hình tròn màu xám
                     p.draw.circle(screen, '#9C9C9C', center, radius)
-    
+
     # Đánh dấu vị trí quân cờ vừa di chuyển là màu vàng
     s.set_alpha(130)
     s.fill(p.Color('yellow'))
@@ -321,6 +332,7 @@ def highlightSquares(screen, gs, validMoves, sqSelected, moveLog):
         screen.blit(s, (moveLog[-1].endCol * SQ_SIZE, moveLog[-1].endRow * SQ_SIZE))
         # Vẽ màu vàng cho ô kết thúc
         screen.blit(s, (moveLog[-1].startCol * SQ_SIZE, moveLog[-1].startRow * SQ_SIZE))
+
 
 def drawAlphabetNumber(screen):
     font = p.font.SysFont("Calibri", 13, True, False)
@@ -335,6 +347,7 @@ def drawAlphabetNumber(screen):
         numberLocation = p.Rect(0, SQ_SIZE * 7, WIDTH, HEIGHT).move((i + 1) * SQ_SIZE - 10, SQ_SIZE - 15)
         screen.blit(number, numberLocation)
 
+
 # Vẽ hình vuông lên bảng, hình vuông góc trên bên trái luôn là màu trắng
 def drawBoard(screen):
     global colors
@@ -344,6 +357,7 @@ def drawBoard(screen):
             color = colors[((r + c) % 2)]
             p.draw.rect(screen, color, p.Rect(c * SQ_SIZE, r * SQ_SIZE, SQ_SIZE, SQ_SIZE))
 
+
 # Vẽ quân cờ lên bảng
 def drawPieces(screen, board):
     for r in range(DIMENSION):
@@ -351,16 +365,18 @@ def drawPieces(screen, board):
             piece = board[r][c]
             if piece != "--" and piece is not None:
                 image = IMAGES[piece]
-                screen.blit(image, p.Rect(c * SQ_SIZE + SQ_SIZE / 2 - image.get_width() / 2,r * SQ_SIZE + SQ_SIZE / 2 - image.get_height() / 2, SQ_SIZE, SQ_SIZE))
+                screen.blit(image, p.Rect(c * SQ_SIZE + SQ_SIZE / 2 - image.get_width() / 2,
+                                          r * SQ_SIZE + SQ_SIZE / 2 - image.get_height() / 2, SQ_SIZE, SQ_SIZE))
+
 
 # Vẽ bảng chọn của tốt phong quân
 def drawPromotionOptions(screen, location):
     locationOptionRow = location.endRow
     locationOptionCol = location.endCol
-    
+
     if locationOptionRow == 7:
         locationOptionRow = locationOptionRow - 3
-    
+
     # Tạo bề mặt có vị trí, kích thước
     optionPP = p.Rect(locationOptionCol * SQ_SIZE, locationOptionRow * SQ_SIZE, SQ_SIZE, 4 * SQ_SIZE)
     p.draw.rect(screen, p.Color('white'), optionPP)
@@ -368,12 +384,15 @@ def drawPromotionOptions(screen, location):
     # Đặt kích thước cho viền đen
     border_width = 1
     p.draw.rect(screen, p.Color('black'), optionPP, border_width)
-        
+
     promotionOptions = ['Q', 'R', 'B', 'N']
     for i, piece in enumerate(promotionOptions):
         image = IMAGES[location.pieceMoved[0] + piece]
-        screen.blit(image, p.Rect(locationOptionCol * SQ_SIZE + SQ_SIZE / 2 - image.get_width() / 2, locationOptionRow * SQ_SIZE + SQ_SIZE / 2 - image.get_height() / 2 + (i * SQ_SIZE), SQ_SIZE, SQ_SIZE))
+        screen.blit(image, p.Rect(locationOptionCol * SQ_SIZE + SQ_SIZE / 2 - image.get_width() / 2,
+                                  locationOptionRow * SQ_SIZE + SQ_SIZE / 2 - image.get_height() / 2 + (i * SQ_SIZE),
+                                  SQ_SIZE, SQ_SIZE))
     p.display.flip()
+
 
 # Hoạt ảnh di chuyển
 def animateMove(move, screen, gs, clock):
@@ -385,11 +404,11 @@ def animateMove(move, screen, gs, clock):
     for frame in range(frameCount + 1):
         # Tính toán vị trí hàng và cột của quân cờ tại từng khung hình trong quá trình di chuyển.
         r, c = (move.startRow + dR * frame / frameCount, move.startCol + dC * frame / frameCount)
-        
+
         # Vẽ lại bàn cờ
         drawBoard(screen)
         drawPieces(screen, gs.board)
-        
+
         # Vẽ màu lên ô cuối cùng khi di chuyển
         color = colors[(move.endRow + move.endCol) % 2]
         endSquare = p.Rect(move.endCol * SQ_SIZE, move.endRow * SQ_SIZE, SQ_SIZE, SQ_SIZE)
@@ -399,15 +418,20 @@ def animateMove(move, screen, gs, clock):
         if move.pieceCaptured != '--':
             imageC = IMAGES[move.pieceCaptured]
             if move.enPassant:
-                screen.blit(imageC, p.Rect(move.endCol * SQ_SIZE + SQ_SIZE / 2 - imageC.get_width() / 2, move.startRow * SQ_SIZE + SQ_SIZE / 2 - imageC.get_height() / 2, SQ_SIZE, SQ_SIZE))
+                screen.blit(imageC, p.Rect(move.endCol * SQ_SIZE + SQ_SIZE / 2 - imageC.get_width() / 2,
+                                           move.startRow * SQ_SIZE + SQ_SIZE / 2 - imageC.get_height() / 2, SQ_SIZE,
+                                           SQ_SIZE))
             else:
-                screen.blit(imageC, p.Rect(move.endCol * SQ_SIZE + SQ_SIZE / 2 - imageC.get_width() / 2, move.endRow * SQ_SIZE + SQ_SIZE / 2 - imageC.get_height() / 2, SQ_SIZE, SQ_SIZE))
+                screen.blit(imageC, p.Rect(move.endCol * SQ_SIZE + SQ_SIZE / 2 - imageC.get_width() / 2,
+                                           move.endRow * SQ_SIZE + SQ_SIZE / 2 - imageC.get_height() / 2, SQ_SIZE,
+                                           SQ_SIZE))
 
         # Nếu ô bắt đầu là quân thì vẽ quân
         if move.pieceMoved != '--':
             imageM = IMAGES[move.pieceMoved]
-            screen.blit(imageM, p.Rect(c * SQ_SIZE + SQ_SIZE / 2 - imageM.get_width() / 2, r * SQ_SIZE + SQ_SIZE / 2 - imageM.get_height() / 2, SQ_SIZE, SQ_SIZE))
-        
+            screen.blit(imageM, p.Rect(c * SQ_SIZE + SQ_SIZE / 2 - imageM.get_width() / 2,
+                                       r * SQ_SIZE + SQ_SIZE / 2 - imageM.get_height() / 2, SQ_SIZE, SQ_SIZE))
+
         drawAlphabetNumber(screen)
 
         # Cập nhật hình ảnh
@@ -415,17 +439,20 @@ def animateMove(move, screen, gs, clock):
         # Số khung hình mỗi giây
         clock.tick(100)
 
+
 def drawText(screen, text, color):
     # Tạo phông chữ (phông chữ, cỡ chữ, in đậm, in nghiêng)
     font = p.font.SysFont("Calibri", 32, True, False)
     # Đọc text và màu
     textObject = font.render(text, 0, p.Color('black'))
     # Tạo hình chữ nhật tính từ góc trên bên trái (0,0) có kích thước WxH và di chuyển ra giữa màn hình
-    textLocation = p.Rect(0, 0, WIDTH, HEIGHT).move(WIDTH / 2 - textObject.get_width() / 2, HEIGHT / 2 - textObject.get_height() / 2)
+    textLocation = p.Rect(0, 0, WIDTH, HEIGHT).move(WIDTH / 2 - textObject.get_width() / 2,
+                                                    HEIGHT / 2 - textObject.get_height() / 2)
     # Vẽ text với màu đen trước đó vị trí lệch với vị trí ban đầu sang phải 2, xuống 2
     screen.blit(textObject, textLocation.move(2, 2))
     textObject = font.render(text, 0, p.Color(color))
-    screen.blit(textObject, textLocation.move(3, 3)) 
+    screen.blit(textObject, textLocation.move(3, 3))
+
 
 if __name__ == "__main__":
     main()
