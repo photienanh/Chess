@@ -9,7 +9,7 @@ Thành viên:
 
 Để chạy ứng dụng Chess, bạn cần thực hiện các bước sau:
 
-1. **Cài đặt Python và các thư viện cần thiết**: Đảm bảo bạn đã cài đặt Python trên máy tính của mình. Nếu chưa, bạn có thể tải Python từ [trang chính thức của Python](https://www.python.org/). Sau đó cài đặt các thư viện cần thiết bằng cách sử dụng CommandPrompt hoặc Terminal và nhập câu lệnh theo cú pháp: ``` pip install _tên thư viện_ ```.
+1. **Cài đặt Python và các thư viện cần thiết**: Đảm bảo bạn đã cài đặt Python trên máy tính của mình. Nếu chưa, bạn có thể tải Python từ [trang chính thức của Python](https://www.python.org/). Sau đó cài đặt các thư viện cần thiết bằng cách sử dụng Terminal và nhập câu lệnh theo cú pháp: ``` pip install _tên thư viện_ ```.
 2. **Chạy ứng dụng**: Sau khi cài đặt các thư viện, mở terminal và điều hướng đến thư mục chứa file `ChessMain.py`, sau đó chạy lệnh :
 ```
 python ChessMain.py
