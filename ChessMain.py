@@ -1,18 +1,5 @@
-# Chưa làm
-# 1. (xong)
-# đánh dấu nước đã đi
-# 2. (xong)
-# thay đổi cách đánh dấu nước đi hợp lệ
-# 3. (xong)
-# đánh số và chữ cho ô
-# 4. (xong)
-# giao diện chọn số người chơi
-# 5.(xong)
-# co hình ảnh
-
-# Lỗi
-# 1.(xong)
-# undoMove tốt đi 2 nước k hiển thị lại hình ảnh
+# Tên: Nguyễn Xuân Hiệp
+# Mã sv: 22022591
 
 import pygame as p
 import ChessEngine, SmartMoveFinder
@@ -95,18 +82,17 @@ def main():
             'text': 'White',
             'textColor': 'white',
             'textColorDown': 'black',
-            'buttonColor': '#B3EE3A',
+            'buttonColor': 'black',
             'buttonColorDown': 'white',
-            'borderColor': 'black',
-            'action': {'playerOne': True, 'playerTwo': False, 'running': True, 'onePlayer': False,
-                       'choosePlayer': False}
+            'borderColor': 'white',
+            'action': {'playerOne': True, 'playerTwo': False, 'running': True, 'onePlayer': False, 'choosePlayer': False}
         },
         {
             'rect': p.Rect(WIDTH / 2 - 200 / 2, HEIGHT / 2 + 25, 200, 50),
             'text': 'Black',
             'textColor': 'black',
             'textColorDown': 'white',
-            'buttonColor': '#B3EE3A',
+            'buttonColor': 'white',
             'buttonColorDown': 'black',
             'borderColor': 'black',
             'action': {'playerOne': False, 'playerTwo': True, 'running': True, 'onePlayer': False,
@@ -115,43 +101,50 @@ def main():
     ]
 
     while choosePlayer or onePlayer:
+        # Vẽ bàn cờ
         drawBoard(screen)
         drawAlphabetNumber(screen)
         drawPieces(screen, gs.board)
 
-        i = 0
+        # Tạo mảng rỗng
         ranges = []
-        if onePlayer:
+        if onePlayer: # Nếu onePlayer = True thì mảng có 2 phần tử [4,5]
             ranges = range(3, 5)
         else:
             ranges = range(3)
 
+        # Vẽ các nút với các chỉ số trong mảng
         for i in ranges:
             button = buttons[i]
-            drawButton(screen, button['rect'], button['text'], button['textColor'], button['buttonColor'],
-                       button['borderColor'])
-
-        if mousePressed and buttonPressed is not None:
-            drawButtonDown(screen, buttonPressed['rect'], buttonPressed['text'], buttonPressed['textColorDown'],
-                           buttonPressed['buttonColorDown'], buttonPressed['borderColor'])
-
+            drawButton(screen, button['rect'], button['text'], button['textColor'], button['buttonColor'], button['borderColor'])
+        
+        # Thay đổi nút khi nút được nhất (buttonPressed) không rỗng
+        if buttonPressed is not None:
+            drawButtonDown(screen, buttonPressed['rect'], buttonPressed['text'], buttonPressed['textColorDown'], buttonPressed['buttonColorDown'], buttonPressed['borderColor'])
+        
+        # Cập nhật giao diện
         p.display.flip()
 
+        # Xử lý chuột
         for e in p.event.get():
             if e.type == p.QUIT:
                 choosePlayer = False
+                onePlayer = False
             elif e.type == p.MOUSEBUTTONDOWN:
                 for i in ranges:
                     button = buttons[i]
+                    # Nếu vị trí chuột bấm xuống nằm trong nút
                     if button['rect'].collidepoint(e.pos):
                         buttonPressed = button
                         mousePressed = True
             elif e.type == p.MOUSEBUTTONUP:
                 for i in ranges:
                     button = buttons[i]
+                    # Nếu vị trí nhấc chuột nằm trong nút
                     if mousePressed and button['rect'].collidepoint(e.pos):
                         for key, value in button['action'].items():
                             if key in globals():
+                                # Cập nhật biến toàn cục trong button['action']
                                 globals()[key] = value
                 buttonPressed = None
                 mousePressed = False
@@ -263,11 +256,16 @@ def main():
 
 
 def drawButtonDown(screen, rect, text, textColorDown, buttonColorDown, borderColor):
+    # Vẽ hình chữ nhật
     p.draw.rect(screen, buttonColorDown, rect)
+    # Vẽ viền
     border_width = 1
     p.draw.rect(screen, borderColor, rect, border_width)
+    # Chỉnh phông chữ
     font = p.font.SysFont('Calibri', 30, True, False)
+    # Đọc text
     textSurface = font.render(text, True, textColorDown)
+    # Vẽ text ở giữa hình chữ nhật
     textRect = textSurface.get_rect(center=rect.center)
     screen.blit(textSurface, textRect)
 
@@ -280,10 +278,6 @@ def drawButton(screen, rect, text, textColor, buttonColor, borderColor):
     textSurface = font.render(text, True, textColor)
     textRect = textSurface.get_rect(center=rect.center)
     screen.blit(textSurface, textRect)
-
-
-def handleButtonClick(mouse_pos, buttons):
-    pass
 
 
 # Chịu trách nhiệm về tất cả đồ họa trong trạng thái trò chơi hiện tại
