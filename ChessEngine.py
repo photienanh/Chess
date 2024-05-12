@@ -1,52 +1,13 @@
-# Luật hòa cờ
-# 1. không chiếu hết nhưng hết nước đi theo luật(xong)
-# 2. di chuyển 50 bước liên tiếp (cả 2 người) không có nước đi bắt quân hoặc k đi tốt(xong)
-# 3. cùng 1 thế cờ 3 lần 1 ng (xong)
-# 4. thiếu quân(xong)
-
-
-# Chưa làm(xong)
-# tốt phong quân
-
-
-# Lỗi
-# 1. (xong)
-#   File "d:\Bài tập UET\Cơ sở AI\Chess\Chess\ChessEngine.py
-#     self.moveFunctions[piece](r, c, moves)
-# ", line 307, in getPawnMoves
-#     if self.board[r + moveAmount][c] == '--':
-#        ~~~~~~~~~~^^^^^^^^^^^^^^^^
-# IndexError: list index out of range
-
-# 2. (xong)
-# không nhập thành nếu xe hoặc vua đã di chuyển
-
-# 3. (xong)
-# không được ăn tốt sang đường khi xe hoặc hậu hướng vào vua
-
-# 4. (xong)
-# khi tốt qua đường chiếu tướng tốt đồng minh không thể bắt nó
-
-# 5. (xong)
-# tướng đang bị chiếu không được nhập thành
-
-# 6. (xong)
-# mã chiếu tướng các quân khác vẫn đi hướng không bảo vệ vua
-
-# 7. (xong)
-# AI không phong hậu
-
-# Engine cho game cờ vua
 class GameState():
     def __init__(self):
         self.board = [
             ["bR","bN","bB","bQ","bK","bB","bN","bR"],
-            ["bp","bp","bp","bp","bp","bp","wp","bp"],
+            ["bp","bp","bp","bp","bp","bp","bp","bp"],
             ["--","--","--","--","--","--","--","--"],
             ["--","--","--","--","--","--","--","--"],
             ["--","--","--","--","--","--","--","--"],
             ["--","--","--","--","--","--","--","--"],
-            ["wp","wp","wp","wp","wp","wp","bp","wp"],
+            ["wp","wp","wp","wp","wp","wp","wp","wp"],
             ["wR","wN","wB","wQ","wK","wB","wN","wR"]]
         self.moveFunctions = {"p": self.getPawnMoves, "R": self.getRookMoves, "N":self.getKnightMoves,
                             "B": self.getBishopMoves, "Q": self.getQueenMoves, "K": self.getKingMoves}
