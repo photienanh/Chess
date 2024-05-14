@@ -566,12 +566,12 @@ class GameState():
             moves.append(Move((r, c), (r, c - 2), self.board, castle = True))
 
 class Move():
-    ranksToRows = {"1":7,"2":6,"3":5,"4":4,
-                   "5":3,"6":2,"7":1,"8":0}
-    rowsToRanks = {v: k for k, v in ranksToRows.items()}
-    filesToCols = {"a":0,"b":1,"c":2,"d":3,
-                  "e":4,"f":5,"g":6,"h":7}
-    colsToFiles = {v: k for k, v in filesToCols.items()}
+    # ranksToRows = {"1":7,"2":6,"3":5,"4":4,
+    #                "5":3,"6":2,"7":1,"8":0}
+    # rowsToRanks = {v: k for k, v in ranksToRows.items()}
+    # filesToCols = {"a":0,"b":1,"c":2,"d":3,
+    #               "e":4,"f":5,"g":6,"h":7}
+    # colsToFiles = {v: k for k, v in filesToCols.items()}
     
     def __init__(self, startSq, endSq, board, enPassant = False, castle = False, promotedPiece = None):
         self.startRow = startSq[0]
@@ -593,19 +593,19 @@ class Move():
         if self.pawnPromotion:
             self.promotedPiece = self.pieceMoved[0] + 'Q' or 'R' or 'N' or 'B'
 
-    def create_none():
-        return None
+    # def create_none():
+    #     return None
 
     def __eq__(self, other):
         if isinstance(other, Move):
             return self.moveID == other.moveID
         return False
     
-    def getChessLocation(self):
-        return self.getRankFile(self.startRow, self.startCol) + self.getRankFile(self.endRow, self.endCol)
+    # def getChessLocation(self):
+    #     return self.getRankFile(self.startRow, self.startCol) + self.getRankFile(self.endRow, self.endCol)
     
-    def getRankFile(self, r, c):
-        return self.colsToFiles[c] + self.rowsToRanks[r]
+    # def getRankFile(self, r, c):
+    #     return self.colsToFiles[c] + self.rowsToRanks[r]
 
 class CastleRights():
     def __init__(self, wks, bks, wqs, bqs):
