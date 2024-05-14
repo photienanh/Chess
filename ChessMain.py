@@ -2,7 +2,7 @@
 # Mã sv: 22022591
 
 import pygame as p
-import ChessEngine, SmartMoveFinder
+import ChessEngine, SmartMoveFinder, Evalute
 
 WIDTH = HEIGHT = 512  # Kích thước cửa sổ
 DIMENSION = 8  # Kích thước bảng cờ vua 8x8 ô
@@ -226,6 +226,10 @@ def main():
                     gameOver = False
 
         if not gameOver and not humanTurn:
+            if Evalute.check_mid_game(gs):
+                SmartMoveFinder.DEPTH = 4
+            else:
+                SmartMoveFinder.DEPTH = 3
             AIMove = SmartMoveFinder.findBestMinimaxMove(gs, validMoves)
             if AIMove is None:
                 AIMove = SmartMoveFinder.findRandomMove(validMoves)
