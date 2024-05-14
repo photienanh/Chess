@@ -21,7 +21,7 @@ choosePlayer = True
 def loadImages():
     pieces = ['wp', 'wR', 'wN', 'wB', 'wK', 'wQ', 'bp', 'bR', 'bN', 'bB', 'bK', 'bQ']
     for piece in pieces:
-        IMAGES[piece] = p.transform.scale(p.image.load("images/" + piece + ".png"), (50, 50))
+        IMAGES[piece] = p.transform.scale(p.image.load("D:/Chess/images/" + piece + ".png"), (50, 50))
 
 
 # Xử lý dữ liệu đầu vào của người dùng và cập nhật đồ họa
