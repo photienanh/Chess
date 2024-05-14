@@ -14,10 +14,6 @@ Thành viên:
 ```
 python ChessMain.py
 ```
-#### Ví dụ trong trường hợp thư mục chứa ChessMain.py là D:\Chess:
-Nếu bạn dùng Terminal trực tiếp trên Visual Studio Code hoặc các IDE hay TextEditor tương tự, hãy điều hướng đến thư mục Chess này và chạy câu lệnh bên sau: ``` python -u "ChessMain.py" ```
-
-Nếu bạn dùng Terminal hoặc Command Prompt trên Windows:
-    - Đối với Terminal, chạy câu lệnh ``` cd D:\Chess ``` sau đó chạy câu lệnh ``` python -u "ChessMain.py" ```
-    - Đối với CommandPrompt, chạy câu lệnh ``` D: ``` sau đó nhập ``` cd Chess ``` sau đó là ``` python -u "ChessMain.py" ```
+***Ví dụ: Trong trường hợp thư mục chứa ChessMain.py là D:\Chess:*** 
+Mở Terminal và chạy câu lệnh sau : ```cd D:\Chess; python ChessMain.py```
 
