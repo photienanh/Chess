@@ -143,3 +143,14 @@ def check_end_game(board) -> bool:
         return True
 
     return False
+
+def check_mid_game(gs) -> bool:
+    count = 0
+    for row in gs.board:
+        for square in row:
+            if square != "--":
+                count+=1
+    if count > 20:
+        return False
+    return True
+               

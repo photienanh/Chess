@@ -1,3 +1,5 @@
+# Phó Viết Tiến Anh
+# 22022568
 class GameState():
     def __init__(self):
         self.board = [

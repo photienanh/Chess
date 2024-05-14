@@ -12,38 +12,6 @@ global nextMove
 def findRandomMove(validMoves):
     return validMoves[random.randint(0, len(validMoves)-1)]
 
-def findBestMove(gs, validMoves):
-    turn = 1 if gs.whiteToMove else -1
-    MiniMaxScore = CHECKMATE
-    bestAIMove = None
-    random.shuffle(validMoves)
-    for AIMove in validMoves:
-        gs.makeMove(AIMove)
-        PlayerMoves = gs.getValidMoves()
-        if gs.staleMate:
-            MaxAIscore = STALEMATE
-        elif gs.checkMate:           
-            MaxAIscore = -CHECKMATE
-        else:
-            MaxAIscore = -CHECKMATE
-            for PlayerMove in PlayerMoves:
-                gs.makeMove(PlayerMove)
-                gs.getValidMoves()
-                if gs.checkMate:
-                    score = CHECKMATE
-                elif gs.staleMate:
-                    score = STALEMATE
-                else:
-                    score = -turn * scoreMaterial(gs.board)
-                if score > MaxAIscore:
-                    MaxAIscore = score
-                gs.undoMove()
-        if MiniMaxScore > MaxAIscore:
-            MiniMaxScore = MaxAIscore
-            bestAIMove = AIMove
-        gs.undoMove()
-    return bestAIMove
-
 def findBestMinimaxMove(gs, validMoves):
     global nextMove
     nextMove = None
@@ -86,15 +54,3 @@ def findMiniMaxScore(gs, validMoves, depth, alpha, beta, turnMutiplayer):
                 break
             
         return minScore
-    
-
-#white điểm càng cao càng tốt, black điểm càng thấp càng tốt
-def scoreMaterial(board):
-    score = 0
-    for row in board:
-        for square in row:
-            if square[0] == "w":
-                score += pieceScore[square[1]]
-            elif square[0] == "b":
-                score -= pieceScore[square[1]]
-    return score
