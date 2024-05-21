@@ -595,20 +595,11 @@ class Move():
         if self.pawnPromotion:
             self.promotedPiece = self.pieceMoved[0] + 'Q' or 'R' or 'N' or 'B'
 
-    # def create_none():
-    #     return None
-
     def __eq__(self, other):
         if isinstance(other, Move):
             return self.moveID == other.moveID
         return False
     
-    # def getChessLocation(self):
-    #     return self.getRankFile(self.startRow, self.startCol) + self.getRankFile(self.endRow, self.endCol)
-    
-    # def getRankFile(self, r, c):
-    #     return self.colsToFiles[c] + self.rowsToRanks[r]
-
 class CastleRights():
     def __init__(self, wks, bks, wqs, bqs):
         self.wks = wks
