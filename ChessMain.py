@@ -1,6 +1,3 @@
-# Tên: Nguyễn Xuân Hiệp
-# Mã sv: 22022591
-
 import pygame as p
 import ChessEngine, SmartMoveFinder, Evalute
 
