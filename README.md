@@ -29,7 +29,6 @@ Chess/
 ### 1. Clone the repository
 ```bash
 git clone https://github.com/photienanh/Chess
-cd Chess
 ```
 Alternatively, download the ZIP file from GitHub and extract it.
 ### 2. Install Dependencies
