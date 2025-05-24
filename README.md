@@ -26,27 +26,38 @@ Chess/
 - **images/**: Contains chess piece images (png).
 
 ## Installation
-### 1. Clone the repository
+### Option 1: Run the standalone `Chess.exe` (Recommended for Windows users)
+
+1. Go to the [Releases](https://github.com/photienanh/Chess/releases) page.
+2. Download the latest version of `Chess.exe`.
+3. Double-click the file to play – No Python or Pygame installation required!
+### Option 2: Run from source code (requires Python)
+#### 1. Clone the repository
 ```bash
 git clone https://github.com/photienanh/Chess
 ```
 Alternatively, download the ZIP file from GitHub and extract it.
-### 2. Install Dependencies
+#### 2. Install Dependencies
 Ensure Python (version >=3.7) is installed. If not, you can download and install it from the [official Python website](https://www.python.org/downloads/). Then, install the required library:
 ```bash
 pip install pygame
 ```
 ## Usage
-After installing the requirements and downloading the project, open a terminal or command prompt, navigate to the project directory, and start the game with:
-   ```bash
-   python ChessMain.py
-   ```
-This will launch the chess game window. You can then:
-- Choose the game mode (AI, one player, two players).
-- Click to select and move pieces.
-- Undo a move by pressing `z`.
-- Reset the board by pressing `r`.
-- When a pawn is promoted, select the piece you want to promote to.
+
+- **If you chose Option 1 (Chess.exe):**  
+  Just double-click `Chess.exe` to launch the game.
+
+- **If you chose Option 2 (Run from source code):**
+   After installing the requirements and downloading the project, open a terminal or command prompt, navigate to the project directory, and start the game with:
+      ```bash
+      python ChessMain.py
+      ```
+   This will launch the chess game window. You can then:
+   - Choose the game mode (AI, one player, two players).
+   - Click to select and move pieces.
+   - Undo a move by pressing `z`.
+   - Reset the board by pressing `r`.
+   - When a pawn is promoted, select the piece you want to promote to.
 ## Contribution
 Contributions are welcome! To contribute:
 - Fork the repository.

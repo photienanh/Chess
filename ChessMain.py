@@ -1,4 +1,6 @@
 import pygame as p
+import os
+import sys
 import ChessEngine, SmartMoveFinder, Evalute
 
 WIDTH = HEIGHT = 512  # Kích thước cửa sổ
@@ -13,12 +15,18 @@ running = False
 onePlayer = False
 choosePlayer = True
 
+def resource_path(relative_path):
+       try:
+           base_path = sys._MEIPASS
+       except Exception:
+           base_path = os.path.abspath(".")
+       return os.path.join(base_path, relative_path)
 
 # Khởi tạo từ điển của các ảnh
 def loadImages():
     pieces = ['wp', 'wR', 'wN', 'wB', 'wK', 'wQ', 'bp', 'bR', 'bN', 'bB', 'bK', 'bQ']
     for piece in pieces:
-        IMAGES[piece] = p.transform.scale(p.image.load("images/" + piece + ".png"), (50, 50))
+        IMAGES[piece] = p.transform.scale(p.image.load(resource_path("images/" + piece + ".png")), (50, 50))
 
 
 # Xử lý dữ liệu đầu vào của người dùng và cập nhật đồ họa
