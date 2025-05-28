@@ -1,21 +1,46 @@
 # Chess
 This is a Chess game project built with Python and Pygame. The project supports both player-vs-player and player-vs-AI modes, with a graphical user interface.
 ## Features
-- Graphical interface using Pygame.
-- Supports single-player (vs AI) and two-player modes.
-- AI uses Minimax algorithm with board evaluation.
-- Full chess rules: castling, pawn promotion, en passant, checkmate, stalemate.
-- Undo moves and reset the board.
-- Highlights valid moves, last move, and special states (checkmate, stalemate).
+- **Graphical interface** using Pygame with intuitive controls.
+- **Multiple game modes:**
+  - Single-player vs Traditional AI (Minimax algorithm).
+  - Single-player vs Reinforcement Learning AI.
+  - Two-player local multiplayer.
+- **Advanced AI systems:**
+  - Traditional AI uses Minimax algorithm with alpha-beta pruning.
+  - RL AI trained using Deep Q-Learning for adaptive gameplay.
+- **Complete chess implementation:**
+  - Full chess rules: castling, pawn promotion, en passant.
+  - Game state detection: checkmate, stalemate, draw conditions.
+  - Move validation and legal move generation.
+- **Interactive features:**
+  - Highlights valid moves when piece is selected.
+  - Visual indicators for last move played.
+  - Special state highlighting (check, checkmate, stalemate).
+- **Game controls:**
+  - Undo moves functionality (press `z`).
+  - Reset board to starting position (press `r`).
+  - Return main menu while playing (press `Esc`).
+  - Pawn promotion with piece selection dialog
 ## Directory Structure
 ```
 Chess/
-├── images/                # Folder containing chess piece images
-│   └── [wp.png, wR.png, ...]
-├── ChessMain.py           # Main file: GUI and game loop
-├── ChessEngine.py         # Handles logic, state, and chess rules
-├── Evalute.py             # Board evaluation for AI
-└── SmartMoveFinder.py     # AI algorithm to find the best move
+├── images/                    # Chess piece images (PNG files)
+│   ├── wp.png, wR.png, wN.png, wB.png, wQ.png, wK.png  # White pieces
+│   └── bp.png, bR.png, bN.png, bB.png, bQ.png, bK.png  # Black pieces
+├── RL/                        # Reinforcement Learning AI system
+│   ├── ppo_agent.py           # PPO (Proximal Policy Optimization) agent
+│   ├── chess_env.py           # Chess environment for RL training
+│   ├── state_encoder.py       # Game state encoding for neural networks
+│   ├── chess_net.py           # Neural network architectures
+│   ├── reward_system.py       # Reward calculation for RL training
+│   ├── train_advanced.py      # Advanced training script with curriculum learning
+│   ├── ppo_chess_final.pth    # Trained RL model (basic)
+│   └── RL_model.pth           # Advanced trained RL model
+├── ChessMain.py               # Main game file: GUI, game loop, and controls
+├── ChessEngine.py             # Chess game logic, rules, and move validation
+├── SmartMoveFinder.py         # Traditional AI using Minimax with alpha-beta pruning
+└── Evalute.py                 # Board position evaluation for traditional AI
 ```
 ## Main Files Explained
 
@@ -27,7 +52,7 @@ Chess/
 
 ## Installation
 ### Option 1: Run the standalone `Chess.exe` (Recommended for Windows users)
-
+**Note: This option doesn't have RL mode.**
 1. Go to the [Releases](https://github.com/photienanh/Chess/releases) page.
 2. Download the latest version of `Chess.exe`.
 3. Double-click the file to play – No Python or Pygame installation required!
@@ -57,6 +82,7 @@ pip install pygame
    - Click to select and move pieces.
    - Undo a move by pressing `z`.
    - Reset the board by pressing `r`.
+   - Return main menu by pressing `Esc`.
    - When a pawn is promoted, select the piece you want to promote to.
 ## Contribution
 Contributions are welcome! To contribute:
