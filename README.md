@@ -65,7 +65,7 @@ Alternatively, download the ZIP file from GitHub and extract it.
 #### 2. Install Dependencies
 Ensure Python (version >=3.7) is installed. If not, you can download and install it from the [official Python website](https://www.python.org/downloads/). Then, install the required library:
 ```bash
-pip install pygame
+pip install -r requirements.txt
 ```
 ## Usage
 
